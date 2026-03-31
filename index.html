@@ -1,1 +1,73 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC Trader Panel</title>
+
+<style>
+body{
+    background:#0b1220;
+    color:white;
+    font-family:Arial;
+    padding:15px;
+}
+.card{
+    background:#111a2e;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+.price{
+    font-size:40px;
+    font-weight:bold;
+}
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>BTC LIVE TRADER PANEL</h2>
+
+<div class="card">
+    <div>BTC Live Price</div>
+    <div class="price" id="price">$...</div>
+</div>
+
+<div class="grid">
+    <div class="card">24h Change: <span id="change"></span></div>
+    <div class="card">Market Cap: <span id="mcap"></span></div>
+    <div class="card">Volume: <span id="volume"></span></div>
+    <div class="card">Dominance: <span id="dom"></span></div>
+</div>
+
+<script>
+let ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
+
+ws.onmessage = function(event){
+    let data = JSON.parse(event.data);
+    let price = parseFloat(data.p).toFixed(2);
+    document.getElementById("price").innerText = "$" + price;
+};
+
+async function loadData(){
+    const btc = await fetch("https://api.coingecko.com/api/v3/coins/bitcoin").then(r=>r.json());
+    const global = await fetch("https://api.coingecko.com/api/v3/global").then(r=>r.json());
+
+    document.getElementById("change").innerText = btc.market_data.price_change_percentage_24h.toFixed(2) + "%";
+    document.getElementById("mcap").innerText = "$" + btc.market_data.market_cap.usd.toLocaleString();
+    document.getElementById("volume").innerText = "$" + btc.market_data.total_volume.usd.toLocaleString();
+    document.getElementById("dom").innerText = global.data.market_cap_percentage.btc.toFixed(2) + "%";
+}
+
+loadData();
+setInterval(loadData, 60000);
+</script>
+
+</body>
+</html>
