@@ -2,709 +2,896 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BTC Professional Trader Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>BTC Mobile Pro Panel</title>
   <style>
     :root{
-      --bg:#08111f;
-      --panel:#101a2b;
-      --panel2:#0d1727;
-      --line:#20314b;
+      --bg:#07111c;
+      --bg2:#0b1624;
+      --card:#101d2f;
+      --card2:#0d1828;
+      --line:#1f3147;
       --text:#eef4ff;
-      --muted:#93a4bf;
+      --muted:#8ea1bc;
       --green:#16c784;
       --red:#ea3943;
       --yellow:#f5b301;
       --blue:#4da3ff;
+      --purple:#8b7bff;
+      --radius:18px;
+      --radius-sm:14px;
+      --shadow:0 10px 24px rgba(0,0,0,.22);
+      --topbar-h:54px;
+      --status-gap:8px;
+      --tabs-gap:8px;
     }
-    *{box-sizing:border-box}
-    body{
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html,body{
       margin:0;
-      background:linear-gradient(180deg,#07101d,#08111f 30%,#091321);
+      background:linear-gradient(180deg,var(--bg),#091321 45%,#0a1422);
       color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      padding:14px;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+      min-height:100%;
     }
-    .wrap{
-      max-width:1400px;
+
+    body{
+      padding:
+        max(12px, env(safe-area-inset-top))
+        12px
+        max(96px, env(safe-area-inset-bottom))
+        12px;
+    }
+
+    button,input{
+      font:inherit;
+    }
+
+    button{
+      appearance:none;
+      -webkit-appearance:none;
+      border:none;
+      outline:none;
+      cursor:pointer;
+    }
+
+    .app{
+      max-width:460px;
       margin:0 auto;
     }
-    .titlebar{
+
+    .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
+      gap:10px;
+      margin-bottom:12px;
+      min-height:var(--topbar-h);
     }
-    h1{
-      margin:0;
-      font-size:28px;
-      letter-spacing:.3px;
+
+    .brand{
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:.2px;
     }
-    .status-pill{
-      padding:8px 12px;
+
+    .icon-btn{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+    }
+
+    .status-wrap{
+      position:sticky;
+      top:max(0px, env(safe-area-inset-top));
+      z-index:30;
+      padding-top:4px;
+      margin-bottom:12px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .status-card{
+      background:linear-gradient(180deg,#122034,#0d1828);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .price-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .price-main small,
+    .mini-label,
+    .section-sub{
+      color:var(--muted);
+      font-size:12px;
+      display:block;
+      margin-bottom:4px;
+    }
+
+    .price-value{
+      font-size:34px;
+      line-height:1;
+      font-weight:900;
+      margin-bottom:6px;
+      word-break:break-word;
+    }
+
+    .change{
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 10px;
+      min-height:34px;
       border-radius:999px;
-      background:#10251c;
-      border:1px solid #1f4d3d;
-      color:var(--green);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
       font-size:12px;
       font-weight:700;
       white-space:nowrap;
     }
-    .hero{
-      background:linear-gradient(180deg,#121f34,#0d1727);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      margin-bottom:14px;
-      box-shadow:0 12px 30px rgba(0,0,0,.22);
-    }
-    .hero-top{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:space-between;
-      align-items:flex-start;
-    }
-    .hero-left small,.hero-right small,.label{
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-      font-size:12px;
-      letter-spacing:.2px;
-    }
-    .big-price{
-      font-size:44px;
-      font-weight:800;
-      line-height:1;
-      margin-bottom:8px;
-    }
-    .delta{
-      font-size:18px;
-      font-weight:700;
-    }
+
     .green{color:var(--green)}
     .red{color:var(--red)}
     .yellow{color:var(--yellow)}
+    .blue{color:var(--blue)}
+    .purple{color:var(--purple)}
     .muted{color:var(--muted)}
-    .grid-4{
+
+    .status-grid{
       display:grid;
       grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-bottom:14px;
+      gap:8px;
     }
-    .grid-3{
-      display:grid;
-      grid-template-columns:2fr 1fr 1fr;
-      gap:12px;
-      margin-bottom:14px;
+
+    .status-box{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:10px 8px;
+      min-height:66px;
     }
-    .grid-2{
-      display:grid;
-      grid-template-columns:1.4fr 1fr;
-      gap:12px;
-      margin-bottom:14px;
+
+    .status-box .k{
+      color:var(--muted);
+      font-size:10px;
+      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
     }
-    .grid-bottom{
-      display:grid;
-      grid-template-columns:1.3fr 1fr 1fr;
-      gap:12px;
-      margin-bottom:14px;
-    }
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      min-width:0;
-    }
-    .card h3{
-      margin:0 0 12px 0;
-      font-size:16px;
-    }
-    .metric{
-      font-size:22px;
+
+    .status-box .v{
+      font-size:13px;
       font-weight:800;
+      line-height:1.2;
       word-break:break-word;
     }
-    .submetric{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
+
+    .tabs-wrap{
+      position:sticky;
+      top:calc(max(0px, env(safe-area-inset-top)) + 220px);
+      z-index:25;
+      margin-bottom:12px;
+      padding:6px 0;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .kv{
-      display:grid;
-      grid-template-columns:1fr auto;
+
+    .tabs{
+      display:flex;
       gap:8px;
-      padding:7px 0;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      font-size:14px;
+      overflow-x:auto;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+      padding-bottom:2px;
     }
-    .kv:last-child{border-bottom:none}
-    .chart-wrap{
-      overflow:hidden;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.05);
-      background:#0a1321;
+
+    .tabs::-webkit-scrollbar{
+      display:none;
     }
-    .tv-widget{
-      width:100%;
-      height:460px;
+
+    .tab{
+      flex:0 0 auto;
+      min-width:max-content;
+      padding:11px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#0d1828;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
     }
-    .mini-chart{
-      width:100%;
-      height:120px;
-      border-radius:12px;
-      background:
-        linear-gradient(180deg, rgba(22,199,132,.12), rgba(22,199,132,0)),
-        repeating-linear-gradient(to right, transparent 0, transparent 39px, rgba(255,255,255,.04) 40px),
-        repeating-linear-gradient(to bottom, transparent 0, transparent 29px, rgba(255,255,255,.04) 30px),
-        #0a1321;
-      position:relative;
-      overflow:hidden;
-      margin-top:10px;
+
+    .tab.active{
+      background:#15263d;
+      color:var(--text);
+      box-shadow:0 0 0 1px rgba(77,163,255,.15) inset;
     }
-    .mini-chart svg{
-      width:100%;
-      height:100%;
+
+    .page{
+      display:none;
+      animation:fade .2s ease;
+    }
+
+    .page.active{
       display:block;
     }
-    .row{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      padding:7px 0;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      font-size:13px;
+
+    @keyframes fade{
+      from{opacity:.55; transform:translateY(4px)}
+      to{opacity:1; transform:none}
     }
-    .row:last-child{border-bottom:none}
-    .order-row{
+
+    .section{
+      margin-bottom:14px;
+    }
+
+    .section-title{
+      font-size:16px;
+      font-weight:800;
+      margin:0 0 10px;
+    }
+
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .card + .card{
+      margin-top:12px;
+    }
+
+    .state-box{
       display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:8px;
-      padding:7px 0;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      font-size:13px;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
     }
-    .order-row:last-child{border-bottom:none}
-    .buy{color:var(--green)}
-    .sell{color:var(--red)}
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
+
+    .metric-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .metric-card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:12px;
+      min-height:84px;
+    }
+
+    .metric-card .label{
+      color:var(--muted);
+      font-size:11px;
+      margin-bottom:8px;
+    }
+
+    .metric-card .value{
+      font-size:18px;
+      font-weight:900;
+      line-height:1.2;
+      word-break:break-word;
+    }
+
+    .metric-card .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:11px;
+    }
+
+    .chart-toolbar{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding-bottom:2px;
+      margin-bottom:10px;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+
+    .chart-toolbar::-webkit-scrollbar{
+      display:none;
+    }
+
+    .pill{
+      flex:0 0 auto;
+      padding:9px 12px;
       border-radius:999px;
-      padding:6px 10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
       font-size:12px;
       font-weight:700;
-      background:#132137;
+    }
+
+    .chart-box,
+    .placeholder-large,
+    .heatmap-box,
+    .depth-box{
+      height:260px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.12);
+      background:
+        radial-gradient(circle at top left, rgba(77,163,255,.08), transparent 40%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      text-align:center;
+      padding:14px;
+    }
+
+    .placeholder-medium{
+      height:160px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      text-align:center;
+      padding:14px;
+    }
+
+    .rsi-box{
+      margin-top:12px;
+      height:110px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(139,123,255,.05), rgba(255,255,255,.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--muted);
+      text-align:center;
+      padding:14px;
+    }
+
+    .ma-head{
+      display:flex;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .ma-head button{
+      flex:1;
+      border-radius:12px;
+      padding:11px 12px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--text);
+      background:#122239;
       border:1px solid var(--line);
     }
-    .badge-green{color:var(--green)}
-    .badge-red{color:var(--red)}
-    .badge-yellow{color:var(--yellow)}
-    .footer-note{
-      margin-top:8px;
+
+    .ma-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .input-card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:10px;
+    }
+
+    .input-card label{
+      display:block;
+      font-size:11px;
       color:var(--muted);
-      font-size:12px;
+      margin-bottom:8px;
     }
-    .small{
-      font-size:12px;
+
+    .input-card input{
+      width:100%;
+      height:42px;
+      border:none;
+      outline:none;
+      border-radius:12px;
+      background:#0d1828;
+      color:var(--text);
+      padding:0 12px;
+      font-size:15px;
+      font-weight:700;
+      border:1px solid var(--line);
     }
-    .center{
-      text-align:center;
+
+    .btn-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
     }
-    @media (max-width: 1100px){
-      .grid-4{grid-template-columns:repeat(2,1fr)}
-      .grid-3,.grid-2,.grid-bottom{grid-template-columns:1fr}
-      .tv-widget{height:420px}
+
+    .btn{
+      height:46px;
+      border-radius:14px;
+      background:#162740;
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      border:1px solid var(--line);
     }
-    @media (max-width: 680px){
-      body{padding:12px}
-      h1{font-size:24px}
-      .big-price{font-size:36px}
-      .grid-4{grid-template-columns:1fr 1fr}
-      .tv-widget{height:360px}
+
+    .btn.primary{
+      background:#1a3150;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .list-row{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:10px;
+      align-items:center;
+      padding:10px 0;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      font-size:13px;
+    }
+
+    .list-row:last-child{
+      border-bottom:none;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .bottom-bar{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:40;
+      padding:
+        8px 12px
+        max(10px, env(safe-area-inset-bottom))
+        12px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background:linear-gradient(180deg, rgba(7,17,28,.1), rgba(7,17,28,.72));
+    }
+
+    .bottom-inner{
+      max-width:460px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+    }
+
+    .bottom-item{
+      border:1px solid var(--line);
+      background:#0e1a2a;
+      color:var(--muted);
+      border-radius:16px;
+      min-height:52px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .bottom-item.active{
+      color:var(--text);
+      background:#15263d;
+    }
+
+    @media (max-width:390px){
+      .status-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+      .metric-grid,
+      .state-box,
+      .two-col,
+      .ma-grid,
+      .btn-row{
+        grid-template-columns:1fr;
+      }
+      .price-value{
+        font-size:30px;
+      }
+      .tabs-wrap{
+        top:calc(max(0px, env(safe-area-inset-top)) + 278px);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="titlebar">
-      <h1>BTC PROFESSIONAL TRADER PANEL</h1>
-      <div class="status-pill" id="wsStatus">Canlı bağlantı hazırlanıyor</div>
+  <div class="app">
+
+    <div class="topbar">
+      <div class="brand">BTC PRO PANEL</div>
+      <button class="icon-btn" type="button">⚙️</button>
     </div>
 
-    <div class="hero">
-      <div class="hero-top">
-        <div class="hero-left">
-          <small>BTCUSDT Canlı Fiyat</small>
-          <div class="big-price" id="price">$...</div>
-          <div class="delta" id="change24Hero">-</div>
-        </div>
-        <div class="hero-right">
-          <small>Durum</small>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
-            <span class="badge" id="trendBadge">Trend: -</span>
-            <span class="badge" id="riskBadge">Risk: -</span>
-            <span class="badge" id="sentimentBadge">Sentiment: -</span>
+    <div class="status-wrap">
+      <div class="status-card">
+        <div class="price-row">
+          <div class="price-main">
+            <small>BTC Canlı Fiyat</small>
+            <div class="price-value">$0,000</div>
+            <div class="change green">+0.00%</div>
           </div>
-          <div class="footer-note" id="lastUpdate">Son güncelleme bekleniyor</div>
-        </div>
-      </div>
-      <div class="mini-chart">
-        <svg viewBox="0 0 100 30" preserveAspectRatio="none">
-          <polyline id="sparkline" fill="none" stroke="#16c784" stroke-width="1.2"
-            points="0,22 10,21 20,19 30,17 40,18 50,14 60,15 70,12 80,10 90,11 100,7"></polyline>
-        </svg>
-      </div>
-    </div>
-
-    <div class="grid-4">
-      <div class="card">
-        <small class="label">24 Saat Değişim</small>
-        <div class="metric" id="change24">-</div>
-        <div class="submetric">Günlük momentum</div>
-      </div>
-      <div class="card">
-        <small class="label">Market Cap</small>
-        <div class="metric" id="marketCap">-</div>
-        <div class="submetric">Bitcoin piyasa değeri</div>
-      </div>
-      <div class="card">
-        <small class="label">24 Saat Hacim</small>
-        <div class="metric" id="volume">-</div>
-        <div class="submetric">Toplam işlem hacmi</div>
-      </div>
-      <div class="card">
-        <small class="label">BTC Dominance</small>
-        <div class="metric" id="dominance">-</div>
-        <div class="submetric">Genel piyasadaki pay</div>
-      </div>
-
-      <div class="card">
-        <small class="label">RSI (14)</small>
-        <div class="metric" id="rsi">-</div>
-        <div class="submetric" id="rsiText">-</div>
-      </div>
-      <div class="card">
-        <small class="label">EMA 20 / 50 / 200</small>
-        <div class="metric small" id="emaPack">-</div>
-        <div class="submetric">Trend filtreleri</div>
-      </div>
-      <div class="card">
-        <small class="label">Funding Rate</small>
-        <div class="metric" id="fundingRate">-</div>
-        <div class="submetric">Futures piyasa dengesi</div>
-      </div>
-      <div class="card">
-        <small class="label">Open Interest</small>
-        <div class="metric" id="openInterest">-</div>
-        <div class="submetric">Açık pozisyonlar</div>
-      </div>
-    </div>
-
-    <div class="grid-3">
-      <div class="card">
-        <h3>Canlı Grafik</h3>
-        <div class="chart-wrap">
-          <div class="tradingview-widget-container">
-            <div id="tradingview_btc" class="tv-widget"></div>
+          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+            <span class="chip blue">Trend: Neutral</span>
+            <span class="chip yellow">Risk: Medium</span>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <h3>Futures Verileri</h3>
-        <div class="kv"><span>Mark Price</span><strong id="markPrice">-</strong></div>
-        <div class="kv"><span>Index Price</span><strong id="indexPrice">-</strong></div>
-        <div class="kv"><span>Funding</span><strong id="fundingRate2">-</strong></div>
-        <div class="kv"><span>Open Interest</span><strong id="openInterest2">-</strong></div>
-        <div class="kv"><span>24h High</span><strong id="high24">-</strong></div>
-        <div class="kv"><span>24h Low</span><strong id="low24">-</strong></div>
-        <div class="kv"><span>Arz</span><strong id="supply">-</strong></div>
-        <div class="kv"><span>ATH / ATL</span><strong id="athAtl">-</strong></div>
-      </div>
+        <div class="status-grid">
+          <div class="status-box"><div class="k">Spot</div><div class="v">$0,000</div></div>
+          <div class="status-box"><div class="k">Futures</div><div class="v">$0,000</div></div>
+          <div class="status-box"><div class="k">Basis</div><div class="v">0.00</div></div>
+          <div class="status-box"><div class="k">24H</div><div class="v green">+0.00%</div></div>
 
-      <div class="card">
-        <h3>Market Psikolojisi</h3>
-        <div class="center">
-          <div class="metric" id="fearGreed">-</div>
-          <div class="submetric" id="fearGreedText">Fear & Greed</div>
-        </div>
-        <div style="margin-top:14px">
-          <div class="kv"><span>Trend Sinyali</span><strong id="trendText">-</strong></div>
-          <div class="kv"><span>Risk Skoru</span><strong id="riskScore">-</strong></div>
-          <div class="kv"><span>Momentum</span><strong id="momentumText">-</strong></div>
-          <div class="kv"><span>Volatilite</span><strong id="volatilityText">-</strong></div>
+          <div class="status-box"><div class="k">Funding</div><div class="v">0.000%</div></div>
+          <div class="status-box"><div class="k">OI</div><div class="v">0.00B</div></div>
+          <div class="status-box"><div class="k">L/S</div><div class="v">50/50</div></div>
+          <div class="status-box"><div class="k">F&G</div><div class="v">50</div></div>
+
+          <div class="status-box"><div class="k">DOM</div><div class="v">0.0%</div></div>
+          <div class="status-box"><div class="k">Momentum</div><div class="v">Neutral</div></div>
+          <div class="status-box"><div class="k">Squeeze</div><div class="v">Low</div></div>
+          <div class="status-box"><div class="k">WS</div><div class="v green">Live</div></div>
         </div>
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <h3>Order Book (Top 8)</h3>
-        <div class="order-row muted"><strong>Bid</strong><strong>Miktar</strong><strong>Ask</strong></div>
-        <div id="orderBook"></div>
-      </div>
-
-      <div class="card">
-        <h3>Son İşlemler</h3>
-        <div id="recentTrades"></div>
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab active" data-tab="overview" type="button">Overview</button>
+        <button class="tab" data-tab="chart" type="button">Chart</button>
+        <button class="tab" data-tab="spot" type="button">Spot</button>
+        <button class="tab" data-tab="futures" type="button">Futures</button>
+        <button class="tab" data-tab="liquidity" type="button">Liquidity</button>
+        <button class="tab" data-tab="orderflow" type="button">Orderflow</button>
+        <button class="tab" data-tab="macro" type="button">Macro</button>
+        <button class="tab" data-tab="alerts" type="button">Alerts</button>
       </div>
     </div>
 
-    <div class="grid-bottom">
-      <div class="card">
-        <h3>Teknik Özet</h3>
-        <div class="kv"><span>EMA Trend</span><strong id="emaTrend">-</strong></div>
-        <div class="kv"><span>RSI Durumu</span><strong id="rsiState">-</strong></div>
-        <div class="kv"><span>Short-Term Bias</span><strong id="biasText">-</strong></div>
-        <div class="kv"><span>Price vs EMA20</span><strong id="pVs20">-</strong></div>
-        <div class="kv"><span>Price vs EMA50</span><strong id="pVs50">-</strong></div>
-        <div class="kv"><span>Price vs EMA200</span><strong id="pVs200">-</strong></div>
-      </div>
+    <main>
+      <section class="page active" id="overview">
+        <div class="section">
+          <div class="card">
+            <h2 class="section-title">Market State</h2>
+            <div class="state-box">
+              <div class="metric-card"><div class="label">Trend</div><div class="value blue">Neutral</div><div class="sub">Bullish / Bearish / Neutral</div></div>
+              <div class="metric-card"><div class="label">Risk</div><div class="value yellow">Medium</div><div class="sub">Low / Medium / High</div></div>
+              <div class="metric-card"><div class="label">Spot Confirmation</div><div class="value green">Yes</div><div class="sub">Gerçek alım teyidi</div></div>
+              <div class="metric-card"><div class="label">Futures Bias</div><div class="value red">Long Heavy</div><div class="sub">Long / Short baskısı</div></div>
+              <div class="metric-card"><div class="label">Momentum</div><div class="value blue">Strong</div><div class="sub">Weak / Medium / Strong</div></div>
+              <div class="metric-card"><div class="label">Squeeze Risk</div><div class="value yellow">Medium</div><div class="sub">Sıkışma riski</div></div>
+            </div>
+          </div>
+        </div>
 
-      <div class="card">
-        <h3>Hızlı Özet</h3>
-        <div class="kv"><span>BTC Dominance</span><strong id="quickDom">-</strong></div>
-        <div class="kv"><span>24h Return</span><strong id="quickReturn">-</strong></div>
-        <div class="kv"><span>Funding Bias</span><strong id="fundingBias">-</strong></div>
-        <div class="kv"><span>OI Bias</span><strong id="oiBias">-</strong></div>
-      </div>
+        <div class="section">
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">Spot Price</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Futures Price</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Basis</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">24H Change</div><div class="value green">+0.00%</div></div>
 
-      <div class="card">
-        <h3>Sistem</h3>
-        <div class="kv"><span>WebSocket</span><strong id="sysWs">-</strong></div>
-        <div class="kv"><span>REST Veri</span><strong id="sysRest">-</strong></div>
-        <div class="kv"><span>Son REST Güncelleme</span><strong id="sysUpdate">-</strong></div>
-        <div class="footer-note">Not: Bazı public API’lerde anlık erişim sınırları olabilir. Bu durumda ilgili kart kısa süre boş kalabilir.</div>
-      </div>
+            <div class="metric-card"><div class="label">Spot Volume</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">Futures Volume</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">Open Interest</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">OI Delta</div><div class="value">0.00%</div></div>
+
+            <div class="metric-card"><div class="label">Funding</div><div class="value">0.000%</div></div>
+            <div class="metric-card"><div class="label">L/S Ratio</div><div class="value">50/50</div></div>
+            <div class="metric-card"><div class="label">Liquidations 1H</div><div class="value">$0.00M</div></div>
+            <div class="metric-card"><div class="label">Liquidations 24H</div><div class="value">$0.00M</div></div>
+
+            <div class="metric-card"><div class="label">Dominance</div><div class="value">0.0%</div></div>
+            <div class="metric-card"><div class="label">Fear & Greed</div><div class="value">50</div></div>
+            <div class="metric-card"><div class="label">Risk Score</div><div class="value yellow">55 / 100</div></div>
+            <div class="metric-card"><div class="label">Trend Score</div><div class="value blue">0 / 10</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="chart">
+        <div class="card">
+          <h2 class="section-title">Chart</h2>
+
+          <div class="chart-toolbar">
+            <button class="pill" type="button">1m</button>
+            <button class="pill" type="button">5m</button>
+            <button class="pill" type="button">15m</button>
+            <button class="pill" type="button">1H</button>
+            <button class="pill" type="button">4H</button>
+            <button class="pill" type="button">1D</button>
+          </div>
+
+          <div class="chart-toolbar">
+            <button class="pill" type="button">Spot</button>
+            <button class="pill" type="button">Futures</button>
+            <button class="pill" type="button">Overlay</button>
+          </div>
+
+          <div class="chart-box">Ana grafik alanı<br>Candles + EMA + SMA + Volume</div>
+          <div class="rsi-box">RSI Panel Alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">MA Controls</h2>
+
+          <div class="ma-head">
+            <button type="button">EMA</button>
+            <button type="button">SMA</button>
+          </div>
+
+          <div class="ma-grid">
+            <div class="input-card"><label>EMA 1</label><input type="number" value="20"></div>
+            <div class="input-card"><label>EMA 2</label><input type="number" value="50"></div>
+            <div class="input-card"><label>EMA 3</label><input type="number" value="111"></div>
+            <div class="input-card"><label>EMA 4</label><input type="number" value="200"></div>
+            <div class="input-card"><label>EMA 5</label><input type="number" value="355"></div>
+            <div class="input-card"><label>EMA 6</label><input type="number" value="777"></div>
+          </div>
+
+          <div class="ma-grid" style="margin-top:10px;">
+            <div class="input-card"><label>SMA 1</label><input type="number" value="21"></div>
+            <div class="input-card"><label>SMA 2</label><input type="number" value="55"></div>
+            <div class="input-card"><label>SMA 3</label><input type="number" value="100"></div>
+            <div class="input-card"><label>SMA 4</label><input type="number" value="200"></div>
+            <div class="input-card"><label>SMA 5</label><input type="number" value="300"></div>
+            <div class="input-card"><label>SMA 6</label><input type="number" value="400"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary" type="button">Uygula</button>
+            <button class="btn" type="button">Kaydet</button>
+            <button class="btn" type="button">Sıfırla</button>
+            <button class="btn" type="button">Preset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="spot">
+        <div class="card">
+          <h2 class="section-title">Spot Summary</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">Spot Volume</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">Buy/Sell Delta</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">Spot CVD</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">Large Orders</div><div class="value">0</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Spot Order Book</h2>
+          <div class="placeholder-medium">Spot Order Book Alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Spot Depth</h2>
+          <div class="depth-box">Spot Depth Chart Alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Spot Liquidity Walls</h2>
+          <div class="placeholder-medium">Spot likidite duvarları / absorption alanı</div>
+        </div>
+      </section>
+
+      <section class="page" id="futures">
+        <div class="card">
+          <h2 class="section-title">Futures Summary</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">Funding</div><div class="value">0.000%</div></div>
+            <div class="metric-card"><div class="label">Open Interest</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">OI Delta</div><div class="value">0.00%</div></div>
+            <div class="metric-card"><div class="label">L/S Ratio</div><div class="value">50/50</div></div>
+
+            <div class="metric-card"><div class="label">Mark Price</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Index Price</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Futures Volume</div><div class="value">0.00B</div></div>
+            <div class="metric-card"><div class="label">Taker Buy/Sell</div><div class="value">0.00</div></div>
+
+            <div class="metric-card"><div class="label">Liquid 1H</div><div class="value">$0.00M</div></div>
+            <div class="metric-card"><div class="label">Liquid 4H</div><div class="value">$0.00M</div></div>
+            <div class="metric-card"><div class="label">Liquid 24H</div><div class="value">$0.00M</div></div>
+            <div class="metric-card"><div class="label">Squeeze Risk</div><div class="value yellow">Medium</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Futures CVD / OI Trend</h2>
+          <div class="placeholder-medium">Mini futures trend grafiği alanı</div>
+        </div>
+      </section>
+
+      <section class="page" id="liquidity">
+        <div class="card">
+          <h2 class="section-title">Liquidity Summary</h2>
+          <div class="two-col">
+            <div class="metric-card"><div class="label">Upper Cluster</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Lower Cluster</div><div class="value">$0,000</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Liquidity Heatmap</h2>
+          <div class="heatmap-box">Likidite heatmap alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Liquidation Heatmap</h2>
+          <div class="heatmap-box">Likidasyon heatmap alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Levels</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">Upper Levels</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Lower Levels</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Long Liquidation</div><div class="value">$0,000</div></div>
+            <div class="metric-card"><div class="label">Short Liquidation</div><div class="value">$0,000</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="orderflow">
+        <div class="card">
+          <h2 class="section-title">Orderflow Summary</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">Buy Pressure</div><div class="value green">0.00</div></div>
+            <div class="metric-card"><div class="label">Sell Pressure</div><div class="value red">0.00</div></div>
+            <div class="metric-card"><div class="label">Volume Delta</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">CVD</div><div class="value">0.00</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Recent Trades / Tape</h2>
+          <div class="list">
+            <div class="list-row"><span>BUY</span><span>$0,000</span><span class="muted">0.0000</span></div>
+            <div class="list-row"><span>SELL</span><span>$0,000</span><span class="muted">0.0000</span></div>
+            <div class="list-row"><span>BUY</span><span>$0,000</span><span class="muted">0.0000</span></div>
+            <div class="list-row"><span>SELL</span><span>$0,000</span><span class="muted">0.0000</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Live Order Book</h2>
+          <div class="placeholder-medium">Order book alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Depth / Wall Detection</h2>
+          <div class="depth-box">Depth ve wall detection alanı</div>
+        </div>
+      </section>
+
+      <section class="page" id="macro">
+        <div class="card">
+          <h2 class="section-title">Macro State</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="label">DXY</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">SP500</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">Nasdaq</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">Gold</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">US10Y</div><div class="value">0.00</div></div>
+            <div class="metric-card"><div class="label">ETF Flow</div><div class="value">$0.00M</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">News / Economic Calendar</h2>
+          <div class="placeholder-medium">Makro haber ve takvim alanı</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">BTC Correlation</h2>
+          <div class="placeholder-medium">BTC korelasyon kutusu</div>
+        </div>
+      </section>
+
+      <section class="page" id="alerts">
+        <div class="card">
+          <h2 class="section-title">Quick Alert Create</h2>
+          <div class="metric-grid">
+            <div class="input-card"><label>Price Alert</label><input type="text" placeholder="Örn: 70000"></div>
+            <div class="input-card"><label>RSI Alert</label><input type="text" placeholder="Örn: 70"></div>
+            <div class="input-card"><label>Funding Alert</label><input type="text" placeholder="Örn: 0.03"></div>
+            <div class="input-card"><label>OI Alert</label><input type="text" placeholder="Örn: +5%"></div>
+            <div class="input-card"><label>EMA Cross</label><input type="text" placeholder="Örn: 50/200"></div>
+            <div class="input-card"><label>SMA Cross</label><input type="text" placeholder="Örn: 111/200"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn primary" type="button">Alarm Oluştur</button>
+            <button class="btn" type="button">Temizle</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Active Alerts</h2>
+          <div class="list">
+            <div class="list-row"><span>BTC > 70,000</span><span class="yellow">Bekliyor</span><span>×</span></div>
+            <div class="list-row"><span>RSI > 70</span><span class="yellow">Bekliyor</span><span>×</span></div>
+            <div class="list-row"><span>Funding > 0.03</span><span class="yellow">Bekliyor</span><span>×</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-inner">
+      <button class="bottom-item active" data-tab-link="overview" type="button">🏠<span>Home</span></button>
+      <button class="bottom-item" data-tab-link="chart" type="button">📈<span>Chart</span></button>
+      <button class="bottom-item" data-tab-link="liquidity" type="button">💧<span>Liquidity</span></button>
+      <button class="bottom-item" data-tab-link="alerts" type="button">🔔<span>Alerts</span></button>
+      <button class="bottom-item" data-tab-link="macro" type="button">⚙️<span>Macro</span></button>
     </div>
   </div>
 
-  <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
-    const els = {};
-    [
-      "price","change24Hero","change24","marketCap","volume","dominance","rsi","rsiText","emaPack",
-      "fundingRate","openInterest","markPrice","indexPrice","fundingRate2","openInterest2",
-      "high24","low24","supply","athAtl","fearGreed","fearGreedText","trendText","riskScore",
-      "momentumText","volatilityText","orderBook","recentTrades","emaTrend","rsiState","biasText",
-      "pVs20","pVs50","pVs200","quickDom","quickReturn","fundingBias","oiBias","lastUpdate",
-      "wsStatus","sysWs","sysRest","sysUpdate","trendBadge","riskBadge","sentimentBadge","sparkline"
-    ].forEach(id => els[id] = document.getElementById(id));
+    const tabs = document.querySelectorAll('.tab');
+    const pages = document.querySelectorAll('.page');
+    const bottomItems = document.querySelectorAll('.bottom-item');
 
-    let latestPrice = null;
-    let tradeBuffer = [];
-    let ws;
-    let reconnectTimer = null;
-
-    function fmtUsd(n, digits=0){
-      if(n === null || n === undefined || isNaN(n)) return "-";
-      return "$" + Number(n).toLocaleString("en-US", {maximumFractionDigits:digits, minimumFractionDigits:digits});
-    }
-    function fmtNum(n, digits=2){
-      if(n === null || n === undefined || isNaN(n)) return "-";
-      return Number(n).toLocaleString("en-US", {maximumFractionDigits:digits, minimumFractionDigits:digits});
-    }
-    function setText(id, value, cls=""){
-      els[id].textContent = value;
-      els[id].className = cls ? cls : "";
-    }
-    function setMetric(id, value, cls=""){
-      els[id].textContent = value;
-      els[id].className = "metric " + cls;
-    }
-    function ema(values, period){
-      const k = 2 / (period + 1);
-      let emaVal = values[0];
-      for(let i=1;i<values.length;i++) emaVal = values[i]*k + emaVal*(1-k);
-      return emaVal;
-    }
-    function rsi(values, period=14){
-      if(values.length < period + 1) return null;
-      let gains = 0, losses = 0;
-      for(let i=1;i<=period;i++){
-        const diff = values[i] - values[i-1];
-        if(diff >= 0) gains += diff;
-        else losses -= diff;
-      }
-      let avgGain = gains / period;
-      let avgLoss = losses / period;
-
-      for(let i=period+1;i<values.length;i++){
-        const diff = values[i] - values[i-1];
-        const gain = diff > 0 ? diff : 0;
-        const loss = diff < 0 ? -diff : 0;
-        avgGain = ((avgGain * (period - 1)) + gain) / period;
-        avgLoss = ((avgLoss * (period - 1)) + loss) / period;
-      }
-      if(avgLoss === 0) return 100;
-      const rs = avgGain / avgLoss;
-      return 100 - (100 / (1 + rs));
-    }
-    function buildSparkline(prices){
-      if(!prices || prices.length < 2) return;
-      const min = Math.min(...prices);
-      const max = Math.max(...prices);
-      const points = prices.map((p,i)=>{
-        const x = (i/(prices.length-1))*100;
-        const y = max===min ? 15 : 27 - ((p-min)/(max-min))*22;
-        return `${x.toFixed(2)},${y.toFixed(2)}`;
-      }).join(" ");
-      els.sparkline.setAttribute("points", points);
-      els.sparkline.setAttribute("stroke", prices[prices.length-1] >= prices[0] ? "#16c784" : "#ea3943");
-    }
-    function fearGreedLabel(v){
-      if(v >= 75) return "Aşırı Açgözlülük";
-      if(v >= 55) return "Açgözlülük";
-      if(v >= 45) return "Nötr";
-      if(v >= 25) return "Korku";
-      return "Aşırı Korku";
-    }
-    function computeRisk(rsiVal, change24, funding, price, ema20, ema50, ema200){
-      let risk = 50;
-      if(rsiVal > 70 || rsiVal < 30) risk += 12;
-      if(Math.abs(change24) > 4) risk += 14;
-      if(Math.abs(funding) > 0.03) risk += 8;
-      if(price < ema50) risk += 6;
-      if(price < ema200) risk += 10;
-      return Math.max(0, Math.min(100, Math.round(risk)));
-    }
-    function volatilityLabel(change24){
-      const v = Math.abs(change24);
-      if(v > 5) return "Yüksek";
-      if(v > 2) return "Orta";
-      return "Düşük";
-    }
-    function updateBadges(trend, risk, fgText){
-      els.trendBadge.textContent = "Trend: " + trend;
-      els.riskBadge.textContent = "Risk: " + risk;
-      els.sentimentBadge.textContent = "Sentiment: " + fgText;
-
-      els.trendBadge.className = "badge " + (trend.includes("Bull") ? "badge-green" : trend.includes("Bear") ? "badge-red" : "badge-yellow");
-      const riskNum = parseInt(risk,10);
-      els.riskBadge.className = "badge " + (riskNum >= 70 ? "badge-red" : riskNum >= 45 ? "badge-yellow" : "badge-green");
-      els.sentimentBadge.className = "badge " + (fgText.includes("Açgözlülük") ? "badge-green" : fgText.includes("Korku") ? "badge-red" : "badge-yellow");
+    function activateTab(id){
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+      pages.forEach(p => p.classList.toggle('active', p.id === id));
+      bottomItems.forEach(b => b.classList.toggle('active', b.dataset.tabLink === id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    async function fetchJson(url){
-      const r = await fetch(url, {cache:"no-store"});
-      if(!r.ok) throw new Error("API hata");
-      return r.json();
-    }
-
-    async function refreshRest(){
-      try{
-        const [
-          btc,
-          globalData,
-          klines,
-          depth,
-          premium,
-          oi,
-          fg
-        ] = await Promise.all([
-          fetchJson("https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false"),
-          fetchJson("https://api.coingecko.com/api/v3/global"),
-          fetchJson("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=5m&limit=250"),
-          fetchJson("https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=8"),
-          fetchJson("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT"),
-          fetchJson("https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT"),
-          fetchJson("https://api.alternative.me/fng/?limit=1")
-        ]);
-
-        els.sysRest.textContent = "Aktif";
-        els.sysRest.className = "green";
-
-        const md = btc.market_data;
-        const change24 = md.price_change_percentage_24h ?? 0;
-        const marketCap = md.market_cap.usd;
-        const volume = md.total_volume.usd;
-        const dominance = globalData.data.market_cap_percentage.btc;
-        const high24 = md.high_24h.usd;
-        const low24 = md.low_24h.usd;
-        const supply = md.circulating_supply;
-        const ath = md.ath.usd;
-        const atl = md.atl.usd;
-        const closes = klines.map(k => Number(k[4]));
-        const lastClose = closes[closes.length - 1];
-        const ema20 = ema(closes.slice(-80), 20);
-        const ema50 = ema(closes.slice(-140), 50);
-        const ema200 = ema(closes, 200);
-        const rsiVal = rsi(closes.slice(-120), 14);
-        const funding = Number(premium.lastFundingRate) * 100;
-        const oiVal = Number(oi.openInterest);
-        const fgVal = Number(fg.data[0].value);
-        const fgText = fearGreedLabel(fgVal);
-
-        setMetric("change24", `${change24.toFixed(2)}%`, change24 >= 0 ? "green" : "red");
-        els.change24Hero.textContent = `${change24.toFixed(2)}% / 24h`;
-        els.change24Hero.className = "delta " + (change24 >= 0 ? "green" : "red");
-        setMetric("marketCap", fmtUsd(marketCap));
-        setMetric("volume", fmtUsd(volume));
-        setMetric("dominance", `${dominance.toFixed(2)}%`);
-        els.quickDom.textContent = `${dominance.toFixed(2)}%`;
-        els.quickReturn.textContent = `${change24.toFixed(2)}%`;
-
-        setMetric("rsi", rsiVal ? rsiVal.toFixed(2) : "-",
-          rsiVal > 70 ? "red" : rsiVal < 30 ? "green" : "yellow"
-        );
-        els.rsiText.textContent = rsiVal > 70 ? "Aşırı alım" : rsiVal < 30 ? "Aşırı satım" : "Nötr bölge";
-        els.rsiState.textContent = els.rsiText.textContent;
-
-        els.emaPack.textContent = `20: ${fmtNum(ema20,2)} | 50: ${fmtNum(ema50,2)} | 200: ${fmtNum(ema200,2)}`;
-        setMetric("fundingRate", `${funding.toFixed(4)}%`, funding >= 0 ? "green" : "red");
-        setMetric("openInterest", fmtNum(oiVal,0) + " BTC");
-
-        els.markPrice.textContent = fmtUsd(Number(premium.markPrice), 2);
-        els.indexPrice.textContent = fmtUsd(Number(premium.indexPrice), 2);
-        els.fundingRate2.textContent = `${funding.toFixed(4)}%`;
-        els.openInterest2.textContent = fmtNum(oiVal,0) + " BTC";
-        els.high24.textContent = fmtUsd(high24, 2);
-        els.low24.textContent = fmtUsd(low24, 2);
-        els.supply.textContent = fmtNum(supply,0) + " BTC";
-        els.athAtl.textContent = `${fmtUsd(ath,0)} / ${fmtUsd(atl,2)}`;
-
-        els.fearGreed.textContent = fgVal + " / 100";
-        els.fearGreed.className = "metric " + (fgVal >= 55 ? "green" : fgVal <= 45 ? "red" : "yellow");
-        els.fearGreedText.textContent = fgText;
-
-        const trend =
-          lastClose > ema20 && ema20 > ema50 && ema50 > ema200 ? "Bullish" :
-          lastClose < ema20 && ema20 < ema50 && ema50 < ema200 ? "Bearish" :
-          "Nötr";
-
-        const risk = computeRisk(rsiVal, change24, funding, lastClose, ema20, ema50, ema200);
-        const momentum =
-          change24 > 2 && rsiVal > 50 ? "Güçlü" :
-          change24 < -2 && rsiVal < 50 ? "Zayıf" :
-          "Orta";
-
-        els.trendText.textContent = trend;
-        els.emaTrend.textContent = trend;
-        els.momentumText.textContent = momentum;
-        els.volatilityText.textContent = volatilityLabel(change24);
-        els.riskScore.textContent = risk + "/100";
-        els.biasText.textContent =
-          lastClose > ema20 ? "Kısa vadede yukarı" : "Kısa vadede aşağı";
-        els.pVs20.textContent = lastClose > ema20 ? "Üstünde" : "Altında";
-        els.pVs50.textContent = lastClose > ema50 ? "Üstünde" : "Altında";
-        els.pVs200.textContent = lastClose > ema200 ? "Üstünde" : "Altında";
-        els.fundingBias.textContent = funding >= 0 ? "Long baskısı" : "Short baskısı";
-        els.oiBias.textContent = oiVal > 0 ? "Pozisyon açık" : "Zayıf";
-
-        updateBadges(trend, risk + "", fgText);
-        buildSparkline(closes.slice(-40));
-
-        const bids = depth.bids.slice(0,8);
-        const asks = depth.asks.slice(0,8);
-        els.orderBook.innerHTML = "";
-        for(let i=0;i<8;i++){
-          const bid = bids[i];
-          const ask = asks[i];
-          const row = document.createElement("div");
-          row.className = "order-row";
-          row.innerHTML = `
-            <span class="buy">${bid ? Number(bid[0]).toFixed(2) : "-"}</span>
-            <span>${bid ? Number(bid[1]).toFixed(4) : "-"}</span>
-            <span class="sell">${ask ? Number(ask[0]).toFixed(2) : "-"}</span>
-          `;
-          els.orderBook.appendChild(row);
-        }
-
-        const now = new Date().toLocaleTimeString("tr-TR");
-        els.lastUpdate.textContent = "Son REST güncelleme: " + now;
-        els.sysUpdate.textContent = now;
-      } catch (e){
-        els.sysRest.textContent = "Hata";
-        els.sysRest.className = "red";
-      }
-    }
-
-    function pushTrade(price, qty, isSell){
-      tradeBuffer.unshift({price, qty, isSell});
-      tradeBuffer = tradeBuffer.slice(0, 14);
-      renderTrades();
-    }
-
-    function renderTrades(){
-      els.recentTrades.innerHTML = "";
-      tradeBuffer.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "row";
-        div.innerHTML = `
-          <span class="${t.isSell ? 'sell' : 'buy'}">${t.isSell ? "SELL" : "BUY"}</span>
-          <span>${Number(t.price).toFixed(2)}</span>
-          <span class="muted">${Number(t.qty).toFixed(5)}</span>
-        `;
-        els.recentTrades.appendChild(div);
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        activateTab(tab.dataset.tab);
       });
-    }
+    });
 
-    function connectWS(){
-      try{
-        if(ws) ws.close();
-      } catch(_) {}
-      ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
-      els.wsStatus.textContent = "Canlı bağlantı kuruluyor";
-      els.wsStatus.style.color = "var(--yellow)";
-      els.sysWs.textContent = "Bağlanıyor";
-
-      ws.onopen = () => {
-        els.wsStatus.textContent = "WebSocket canlı";
-        els.wsStatus.style.color = "var(--green)";
-        els.sysWs.textContent = "Aktif";
-        els.sysWs.className = "green";
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        latestPrice = Number(data.p);
-        els.price.textContent = fmtUsd(latestPrice, 2);
-        pushTrade(data.p, data.q, !!data.m);
-      };
-
-      ws.onerror = () => {
-        els.wsStatus.textContent = "WebSocket hata";
-        els.wsStatus.style.color = "var(--red)";
-        els.sysWs.textContent = "Hata";
-        els.sysWs.className = "red";
-      };
-
-      ws.onclose = () => {
-        els.wsStatus.textContent = "Yeniden bağlanıyor";
-        els.wsStatus.style.color = "var(--yellow)";
-        els.sysWs.textContent = "Yeniden bağlanıyor";
-        clearTimeout(reconnectTimer);
-        reconnectTimer = setTimeout(connectWS, 3000);
-      };
-    }
-
-    function initTradingView(){
-      if(typeof TradingView === "undefined") return;
-      new TradingView.widget({
-        autosize: true,
-        symbol: "BINANCE:BTCUSDT",
-        interval: "60",
-        timezone: "Europe/Berlin",
-        theme: "dark",
-        style: "1",
-        locale: "tr",
-        toolbar_bg: "#0a1321",
-        enable_publishing: false,
-        hide_top_toolbar: false,
-        allow_symbol_change: false,
-        container_id: "tradingview_btc"
+    bottomItems.forEach(item => {
+      item.addEventListener('click', () => {
+        activateTab(item.dataset.tabLink);
       });
-    }
-
-    connectWS();
-    refreshRest();
-    setInterval(refreshRest, 60000);
-    window.addEventListener("load", initTradingView);
+    });
   </script>
 </body>
 </html>
