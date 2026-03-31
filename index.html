@@ -1,73 +1,710 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BTC Trader Panel</title>
-
-<style>
-body{
-    background:#0b1220;
-    color:white;
-    font-family:Arial;
-    padding:15px;
-}
-.card{
-    background:#111a2e;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:10px;
-}
-.price{
-    font-size:40px;
-    font-weight:bold;
-}
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BTC Professional Trader Panel</title>
+  <style>
+    :root{
+      --bg:#08111f;
+      --panel:#101a2b;
+      --panel2:#0d1727;
+      --line:#20314b;
+      --text:#eef4ff;
+      --muted:#93a4bf;
+      --green:#16c784;
+      --red:#ea3943;
+      --yellow:#f5b301;
+      --blue:#4da3ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#07101d,#08111f 30%,#091321);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      padding:14px;
+    }
+    .wrap{
+      max-width:1400px;
+      margin:0 auto;
+    }
+    .titlebar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:.3px;
+    }
+    .status-pill{
+      padding:8px 12px;
+      border-radius:999px;
+      background:#10251c;
+      border:1px solid #1f4d3d;
+      color:var(--green);
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .hero{
+      background:linear-gradient(180deg,#121f34,#0d1727);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:14px;
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
+    }
+    .hero-top{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+    .hero-left small,.hero-right small,.label{
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .big-price{
+      font-size:44px;
+      font-weight:800;
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .delta{
+      font-size:18px;
+      font-weight:700;
+    }
+    .green{color:var(--green)}
+    .red{color:var(--red)}
+    .yellow{color:var(--yellow)}
+    .muted{color:var(--muted)}
+    .grid-4{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .grid-3{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.4fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .grid-bottom{
+      display:grid;
+      grid-template-columns:1.3fr 1fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      min-width:0;
+    }
+    .card h3{
+      margin:0 0 12px 0;
+      font-size:16px;
+    }
+    .metric{
+      font-size:22px;
+      font-weight:800;
+      word-break:break-word;
+    }
+    .submetric{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .kv{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:8px;
+      padding:7px 0;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      font-size:14px;
+    }
+    .kv:last-child{border-bottom:none}
+    .chart-wrap{
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.05);
+      background:#0a1321;
+    }
+    .tv-widget{
+      width:100%;
+      height:460px;
+    }
+    .mini-chart{
+      width:100%;
+      height:120px;
+      border-radius:12px;
+      background:
+        linear-gradient(180deg, rgba(22,199,132,.12), rgba(22,199,132,0)),
+        repeating-linear-gradient(to right, transparent 0, transparent 39px, rgba(255,255,255,.04) 40px),
+        repeating-linear-gradient(to bottom, transparent 0, transparent 29px, rgba(255,255,255,.04) 30px),
+        #0a1321;
+      position:relative;
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .mini-chart svg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+    .row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      padding:7px 0;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      font-size:13px;
+    }
+    .row:last-child{border-bottom:none}
+    .order-row{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:8px;
+      padding:7px 0;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      font-size:13px;
+    }
+    .order-row:last-child{border-bottom:none}
+    .buy{color:var(--green)}
+    .sell{color:var(--red)}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:700;
+      background:#132137;
+      border:1px solid var(--line);
+    }
+    .badge-green{color:var(--green)}
+    .badge-red{color:var(--red)}
+    .badge-yellow{color:var(--yellow)}
+    .footer-note{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .small{
+      font-size:12px;
+    }
+    .center{
+      text-align:center;
+    }
+    @media (max-width: 1100px){
+      .grid-4{grid-template-columns:repeat(2,1fr)}
+      .grid-3,.grid-2,.grid-bottom{grid-template-columns:1fr}
+      .tv-widget{height:420px}
+    }
+    @media (max-width: 680px){
+      body{padding:12px}
+      h1{font-size:24px}
+      .big-price{font-size:36px}
+      .grid-4{grid-template-columns:1fr 1fr}
+      .tv-widget{height:360px}
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="titlebar">
+      <h1>BTC PROFESSIONAL TRADER PANEL</h1>
+      <div class="status-pill" id="wsStatus">Canlı bağlantı hazırlanıyor</div>
+    </div>
 
-<h2>BTC LIVE TRADER PANEL</h2>
+    <div class="hero">
+      <div class="hero-top">
+        <div class="hero-left">
+          <small>BTCUSDT Canlı Fiyat</small>
+          <div class="big-price" id="price">$...</div>
+          <div class="delta" id="change24Hero">-</div>
+        </div>
+        <div class="hero-right">
+          <small>Durum</small>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
+            <span class="badge" id="trendBadge">Trend: -</span>
+            <span class="badge" id="riskBadge">Risk: -</span>
+            <span class="badge" id="sentimentBadge">Sentiment: -</span>
+          </div>
+          <div class="footer-note" id="lastUpdate">Son güncelleme bekleniyor</div>
+        </div>
+      </div>
+      <div class="mini-chart">
+        <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+          <polyline id="sparkline" fill="none" stroke="#16c784" stroke-width="1.2"
+            points="0,22 10,21 20,19 30,17 40,18 50,14 60,15 70,12 80,10 90,11 100,7"></polyline>
+        </svg>
+      </div>
+    </div>
 
-<div class="card">
-    <div>BTC Live Price</div>
-    <div class="price" id="price">$...</div>
-</div>
+    <div class="grid-4">
+      <div class="card">
+        <small class="label">24 Saat Değişim</small>
+        <div class="metric" id="change24">-</div>
+        <div class="submetric">Günlük momentum</div>
+      </div>
+      <div class="card">
+        <small class="label">Market Cap</small>
+        <div class="metric" id="marketCap">-</div>
+        <div class="submetric">Bitcoin piyasa değeri</div>
+      </div>
+      <div class="card">
+        <small class="label">24 Saat Hacim</small>
+        <div class="metric" id="volume">-</div>
+        <div class="submetric">Toplam işlem hacmi</div>
+      </div>
+      <div class="card">
+        <small class="label">BTC Dominance</small>
+        <div class="metric" id="dominance">-</div>
+        <div class="submetric">Genel piyasadaki pay</div>
+      </div>
 
-<div class="grid">
-    <div class="card">24h Change: <span id="change"></span></div>
-    <div class="card">Market Cap: <span id="mcap"></span></div>
-    <div class="card">Volume: <span id="volume"></span></div>
-    <div class="card">Dominance: <span id="dom"></span></div>
-</div>
+      <div class="card">
+        <small class="label">RSI (14)</small>
+        <div class="metric" id="rsi">-</div>
+        <div class="submetric" id="rsiText">-</div>
+      </div>
+      <div class="card">
+        <small class="label">EMA 20 / 50 / 200</small>
+        <div class="metric small" id="emaPack">-</div>
+        <div class="submetric">Trend filtreleri</div>
+      </div>
+      <div class="card">
+        <small class="label">Funding Rate</small>
+        <div class="metric" id="fundingRate">-</div>
+        <div class="submetric">Futures piyasa dengesi</div>
+      </div>
+      <div class="card">
+        <small class="label">Open Interest</small>
+        <div class="metric" id="openInterest">-</div>
+        <div class="submetric">Açık pozisyonlar</div>
+      </div>
+    </div>
 
-<script>
-let ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
+    <div class="grid-3">
+      <div class="card">
+        <h3>Canlı Grafik</h3>
+        <div class="chart-wrap">
+          <div class="tradingview-widget-container">
+            <div id="tradingview_btc" class="tv-widget"></div>
+          </div>
+        </div>
+      </div>
 
-ws.onmessage = function(event){
-    let data = JSON.parse(event.data);
-    let price = parseFloat(data.p).toFixed(2);
-    document.getElementById("price").innerText = "$" + price;
-};
+      <div class="card">
+        <h3>Futures Verileri</h3>
+        <div class="kv"><span>Mark Price</span><strong id="markPrice">-</strong></div>
+        <div class="kv"><span>Index Price</span><strong id="indexPrice">-</strong></div>
+        <div class="kv"><span>Funding</span><strong id="fundingRate2">-</strong></div>
+        <div class="kv"><span>Open Interest</span><strong id="openInterest2">-</strong></div>
+        <div class="kv"><span>24h High</span><strong id="high24">-</strong></div>
+        <div class="kv"><span>24h Low</span><strong id="low24">-</strong></div>
+        <div class="kv"><span>Arz</span><strong id="supply">-</strong></div>
+        <div class="kv"><span>ATH / ATL</span><strong id="athAtl">-</strong></div>
+      </div>
 
-async function loadData(){
-    const btc = await fetch("https://api.coingecko.com/api/v3/coins/bitcoin").then(r=>r.json());
-    const global = await fetch("https://api.coingecko.com/api/v3/global").then(r=>r.json());
+      <div class="card">
+        <h3>Market Psikolojisi</h3>
+        <div class="center">
+          <div class="metric" id="fearGreed">-</div>
+          <div class="submetric" id="fearGreedText">Fear & Greed</div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="kv"><span>Trend Sinyali</span><strong id="trendText">-</strong></div>
+          <div class="kv"><span>Risk Skoru</span><strong id="riskScore">-</strong></div>
+          <div class="kv"><span>Momentum</span><strong id="momentumText">-</strong></div>
+          <div class="kv"><span>Volatilite</span><strong id="volatilityText">-</strong></div>
+        </div>
+      </div>
+    </div>
 
-    document.getElementById("change").innerText = btc.market_data.price_change_percentage_24h.toFixed(2) + "%";
-    document.getElementById("mcap").innerText = "$" + btc.market_data.market_cap.usd.toLocaleString();
-    document.getElementById("volume").innerText = "$" + btc.market_data.total_volume.usd.toLocaleString();
-    document.getElementById("dom").innerText = global.data.market_cap_percentage.btc.toFixed(2) + "%";
-}
+    <div class="grid-2">
+      <div class="card">
+        <h3>Order Book (Top 8)</h3>
+        <div class="order-row muted"><strong>Bid</strong><strong>Miktar</strong><strong>Ask</strong></div>
+        <div id="orderBook"></div>
+      </div>
 
-loadData();
-setInterval(loadData, 60000);
-</script>
+      <div class="card">
+        <h3>Son İşlemler</h3>
+        <div id="recentTrades"></div>
+      </div>
+    </div>
 
+    <div class="grid-bottom">
+      <div class="card">
+        <h3>Teknik Özet</h3>
+        <div class="kv"><span>EMA Trend</span><strong id="emaTrend">-</strong></div>
+        <div class="kv"><span>RSI Durumu</span><strong id="rsiState">-</strong></div>
+        <div class="kv"><span>Short-Term Bias</span><strong id="biasText">-</strong></div>
+        <div class="kv"><span>Price vs EMA20</span><strong id="pVs20">-</strong></div>
+        <div class="kv"><span>Price vs EMA50</span><strong id="pVs50">-</strong></div>
+        <div class="kv"><span>Price vs EMA200</span><strong id="pVs200">-</strong></div>
+      </div>
+
+      <div class="card">
+        <h3>Hızlı Özet</h3>
+        <div class="kv"><span>BTC Dominance</span><strong id="quickDom">-</strong></div>
+        <div class="kv"><span>24h Return</span><strong id="quickReturn">-</strong></div>
+        <div class="kv"><span>Funding Bias</span><strong id="fundingBias">-</strong></div>
+        <div class="kv"><span>OI Bias</span><strong id="oiBias">-</strong></div>
+      </div>
+
+      <div class="card">
+        <h3>Sistem</h3>
+        <div class="kv"><span>WebSocket</span><strong id="sysWs">-</strong></div>
+        <div class="kv"><span>REST Veri</span><strong id="sysRest">-</strong></div>
+        <div class="kv"><span>Son REST Güncelleme</span><strong id="sysUpdate">-</strong></div>
+        <div class="footer-note">Not: Bazı public API’lerde anlık erişim sınırları olabilir. Bu durumda ilgili kart kısa süre boş kalabilir.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    const els = {};
+    [
+      "price","change24Hero","change24","marketCap","volume","dominance","rsi","rsiText","emaPack",
+      "fundingRate","openInterest","markPrice","indexPrice","fundingRate2","openInterest2",
+      "high24","low24","supply","athAtl","fearGreed","fearGreedText","trendText","riskScore",
+      "momentumText","volatilityText","orderBook","recentTrades","emaTrend","rsiState","biasText",
+      "pVs20","pVs50","pVs200","quickDom","quickReturn","fundingBias","oiBias","lastUpdate",
+      "wsStatus","sysWs","sysRest","sysUpdate","trendBadge","riskBadge","sentimentBadge","sparkline"
+    ].forEach(id => els[id] = document.getElementById(id));
+
+    let latestPrice = null;
+    let tradeBuffer = [];
+    let ws;
+    let reconnectTimer = null;
+
+    function fmtUsd(n, digits=0){
+      if(n === null || n === undefined || isNaN(n)) return "-";
+      return "$" + Number(n).toLocaleString("en-US", {maximumFractionDigits:digits, minimumFractionDigits:digits});
+    }
+    function fmtNum(n, digits=2){
+      if(n === null || n === undefined || isNaN(n)) return "-";
+      return Number(n).toLocaleString("en-US", {maximumFractionDigits:digits, minimumFractionDigits:digits});
+    }
+    function setText(id, value, cls=""){
+      els[id].textContent = value;
+      els[id].className = cls ? cls : "";
+    }
+    function setMetric(id, value, cls=""){
+      els[id].textContent = value;
+      els[id].className = "metric " + cls;
+    }
+    function ema(values, period){
+      const k = 2 / (period + 1);
+      let emaVal = values[0];
+      for(let i=1;i<values.length;i++) emaVal = values[i]*k + emaVal*(1-k);
+      return emaVal;
+    }
+    function rsi(values, period=14){
+      if(values.length < period + 1) return null;
+      let gains = 0, losses = 0;
+      for(let i=1;i<=period;i++){
+        const diff = values[i] - values[i-1];
+        if(diff >= 0) gains += diff;
+        else losses -= diff;
+      }
+      let avgGain = gains / period;
+      let avgLoss = losses / period;
+
+      for(let i=period+1;i<values.length;i++){
+        const diff = values[i] - values[i-1];
+        const gain = diff > 0 ? diff : 0;
+        const loss = diff < 0 ? -diff : 0;
+        avgGain = ((avgGain * (period - 1)) + gain) / period;
+        avgLoss = ((avgLoss * (period - 1)) + loss) / period;
+      }
+      if(avgLoss === 0) return 100;
+      const rs = avgGain / avgLoss;
+      return 100 - (100 / (1 + rs));
+    }
+    function buildSparkline(prices){
+      if(!prices || prices.length < 2) return;
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      const points = prices.map((p,i)=>{
+        const x = (i/(prices.length-1))*100;
+        const y = max===min ? 15 : 27 - ((p-min)/(max-min))*22;
+        return `${x.toFixed(2)},${y.toFixed(2)}`;
+      }).join(" ");
+      els.sparkline.setAttribute("points", points);
+      els.sparkline.setAttribute("stroke", prices[prices.length-1] >= prices[0] ? "#16c784" : "#ea3943");
+    }
+    function fearGreedLabel(v){
+      if(v >= 75) return "Aşırı Açgözlülük";
+      if(v >= 55) return "Açgözlülük";
+      if(v >= 45) return "Nötr";
+      if(v >= 25) return "Korku";
+      return "Aşırı Korku";
+    }
+    function computeRisk(rsiVal, change24, funding, price, ema20, ema50, ema200){
+      let risk = 50;
+      if(rsiVal > 70 || rsiVal < 30) risk += 12;
+      if(Math.abs(change24) > 4) risk += 14;
+      if(Math.abs(funding) > 0.03) risk += 8;
+      if(price < ema50) risk += 6;
+      if(price < ema200) risk += 10;
+      return Math.max(0, Math.min(100, Math.round(risk)));
+    }
+    function volatilityLabel(change24){
+      const v = Math.abs(change24);
+      if(v > 5) return "Yüksek";
+      if(v > 2) return "Orta";
+      return "Düşük";
+    }
+    function updateBadges(trend, risk, fgText){
+      els.trendBadge.textContent = "Trend: " + trend;
+      els.riskBadge.textContent = "Risk: " + risk;
+      els.sentimentBadge.textContent = "Sentiment: " + fgText;
+
+      els.trendBadge.className = "badge " + (trend.includes("Bull") ? "badge-green" : trend.includes("Bear") ? "badge-red" : "badge-yellow");
+      const riskNum = parseInt(risk,10);
+      els.riskBadge.className = "badge " + (riskNum >= 70 ? "badge-red" : riskNum >= 45 ? "badge-yellow" : "badge-green");
+      els.sentimentBadge.className = "badge " + (fgText.includes("Açgözlülük") ? "badge-green" : fgText.includes("Korku") ? "badge-red" : "badge-yellow");
+    }
+
+    async function fetchJson(url){
+      const r = await fetch(url, {cache:"no-store"});
+      if(!r.ok) throw new Error("API hata");
+      return r.json();
+    }
+
+    async function refreshRest(){
+      try{
+        const [
+          btc,
+          globalData,
+          klines,
+          depth,
+          premium,
+          oi,
+          fg
+        ] = await Promise.all([
+          fetchJson("https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false"),
+          fetchJson("https://api.coingecko.com/api/v3/global"),
+          fetchJson("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=5m&limit=250"),
+          fetchJson("https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=8"),
+          fetchJson("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT"),
+          fetchJson("https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT"),
+          fetchJson("https://api.alternative.me/fng/?limit=1")
+        ]);
+
+        els.sysRest.textContent = "Aktif";
+        els.sysRest.className = "green";
+
+        const md = btc.market_data;
+        const change24 = md.price_change_percentage_24h ?? 0;
+        const marketCap = md.market_cap.usd;
+        const volume = md.total_volume.usd;
+        const dominance = globalData.data.market_cap_percentage.btc;
+        const high24 = md.high_24h.usd;
+        const low24 = md.low_24h.usd;
+        const supply = md.circulating_supply;
+        const ath = md.ath.usd;
+        const atl = md.atl.usd;
+        const closes = klines.map(k => Number(k[4]));
+        const lastClose = closes[closes.length - 1];
+        const ema20 = ema(closes.slice(-80), 20);
+        const ema50 = ema(closes.slice(-140), 50);
+        const ema200 = ema(closes, 200);
+        const rsiVal = rsi(closes.slice(-120), 14);
+        const funding = Number(premium.lastFundingRate) * 100;
+        const oiVal = Number(oi.openInterest);
+        const fgVal = Number(fg.data[0].value);
+        const fgText = fearGreedLabel(fgVal);
+
+        setMetric("change24", `${change24.toFixed(2)}%`, change24 >= 0 ? "green" : "red");
+        els.change24Hero.textContent = `${change24.toFixed(2)}% / 24h`;
+        els.change24Hero.className = "delta " + (change24 >= 0 ? "green" : "red");
+        setMetric("marketCap", fmtUsd(marketCap));
+        setMetric("volume", fmtUsd(volume));
+        setMetric("dominance", `${dominance.toFixed(2)}%`);
+        els.quickDom.textContent = `${dominance.toFixed(2)}%`;
+        els.quickReturn.textContent = `${change24.toFixed(2)}%`;
+
+        setMetric("rsi", rsiVal ? rsiVal.toFixed(2) : "-",
+          rsiVal > 70 ? "red" : rsiVal < 30 ? "green" : "yellow"
+        );
+        els.rsiText.textContent = rsiVal > 70 ? "Aşırı alım" : rsiVal < 30 ? "Aşırı satım" : "Nötr bölge";
+        els.rsiState.textContent = els.rsiText.textContent;
+
+        els.emaPack.textContent = `20: ${fmtNum(ema20,2)} | 50: ${fmtNum(ema50,2)} | 200: ${fmtNum(ema200,2)}`;
+        setMetric("fundingRate", `${funding.toFixed(4)}%`, funding >= 0 ? "green" : "red");
+        setMetric("openInterest", fmtNum(oiVal,0) + " BTC");
+
+        els.markPrice.textContent = fmtUsd(Number(premium.markPrice), 2);
+        els.indexPrice.textContent = fmtUsd(Number(premium.indexPrice), 2);
+        els.fundingRate2.textContent = `${funding.toFixed(4)}%`;
+        els.openInterest2.textContent = fmtNum(oiVal,0) + " BTC";
+        els.high24.textContent = fmtUsd(high24, 2);
+        els.low24.textContent = fmtUsd(low24, 2);
+        els.supply.textContent = fmtNum(supply,0) + " BTC";
+        els.athAtl.textContent = `${fmtUsd(ath,0)} / ${fmtUsd(atl,2)}`;
+
+        els.fearGreed.textContent = fgVal + " / 100";
+        els.fearGreed.className = "metric " + (fgVal >= 55 ? "green" : fgVal <= 45 ? "red" : "yellow");
+        els.fearGreedText.textContent = fgText;
+
+        const trend =
+          lastClose > ema20 && ema20 > ema50 && ema50 > ema200 ? "Bullish" :
+          lastClose < ema20 && ema20 < ema50 && ema50 < ema200 ? "Bearish" :
+          "Nötr";
+
+        const risk = computeRisk(rsiVal, change24, funding, lastClose, ema20, ema50, ema200);
+        const momentum =
+          change24 > 2 && rsiVal > 50 ? "Güçlü" :
+          change24 < -2 && rsiVal < 50 ? "Zayıf" :
+          "Orta";
+
+        els.trendText.textContent = trend;
+        els.emaTrend.textContent = trend;
+        els.momentumText.textContent = momentum;
+        els.volatilityText.textContent = volatilityLabel(change24);
+        els.riskScore.textContent = risk + "/100";
+        els.biasText.textContent =
+          lastClose > ema20 ? "Kısa vadede yukarı" : "Kısa vadede aşağı";
+        els.pVs20.textContent = lastClose > ema20 ? "Üstünde" : "Altında";
+        els.pVs50.textContent = lastClose > ema50 ? "Üstünde" : "Altında";
+        els.pVs200.textContent = lastClose > ema200 ? "Üstünde" : "Altında";
+        els.fundingBias.textContent = funding >= 0 ? "Long baskısı" : "Short baskısı";
+        els.oiBias.textContent = oiVal > 0 ? "Pozisyon açık" : "Zayıf";
+
+        updateBadges(trend, risk + "", fgText);
+        buildSparkline(closes.slice(-40));
+
+        const bids = depth.bids.slice(0,8);
+        const asks = depth.asks.slice(0,8);
+        els.orderBook.innerHTML = "";
+        for(let i=0;i<8;i++){
+          const bid = bids[i];
+          const ask = asks[i];
+          const row = document.createElement("div");
+          row.className = "order-row";
+          row.innerHTML = `
+            <span class="buy">${bid ? Number(bid[0]).toFixed(2) : "-"}</span>
+            <span>${bid ? Number(bid[1]).toFixed(4) : "-"}</span>
+            <span class="sell">${ask ? Number(ask[0]).toFixed(2) : "-"}</span>
+          `;
+          els.orderBook.appendChild(row);
+        }
+
+        const now = new Date().toLocaleTimeString("tr-TR");
+        els.lastUpdate.textContent = "Son REST güncelleme: " + now;
+        els.sysUpdate.textContent = now;
+      } catch (e){
+        els.sysRest.textContent = "Hata";
+        els.sysRest.className = "red";
+      }
+    }
+
+    function pushTrade(price, qty, isSell){
+      tradeBuffer.unshift({price, qty, isSell});
+      tradeBuffer = tradeBuffer.slice(0, 14);
+      renderTrades();
+    }
+
+    function renderTrades(){
+      els.recentTrades.innerHTML = "";
+      tradeBuffer.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "row";
+        div.innerHTML = `
+          <span class="${t.isSell ? 'sell' : 'buy'}">${t.isSell ? "SELL" : "BUY"}</span>
+          <span>${Number(t.price).toFixed(2)}</span>
+          <span class="muted">${Number(t.qty).toFixed(5)}</span>
+        `;
+        els.recentTrades.appendChild(div);
+      });
+    }
+
+    function connectWS(){
+      try{
+        if(ws) ws.close();
+      } catch(_) {}
+      ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
+      els.wsStatus.textContent = "Canlı bağlantı kuruluyor";
+      els.wsStatus.style.color = "var(--yellow)";
+      els.sysWs.textContent = "Bağlanıyor";
+
+      ws.onopen = () => {
+        els.wsStatus.textContent = "WebSocket canlı";
+        els.wsStatus.style.color = "var(--green)";
+        els.sysWs.textContent = "Aktif";
+        els.sysWs.className = "green";
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        latestPrice = Number(data.p);
+        els.price.textContent = fmtUsd(latestPrice, 2);
+        pushTrade(data.p, data.q, !!data.m);
+      };
+
+      ws.onerror = () => {
+        els.wsStatus.textContent = "WebSocket hata";
+        els.wsStatus.style.color = "var(--red)";
+        els.sysWs.textContent = "Hata";
+        els.sysWs.className = "red";
+      };
+
+      ws.onclose = () => {
+        els.wsStatus.textContent = "Yeniden bağlanıyor";
+        els.wsStatus.style.color = "var(--yellow)";
+        els.sysWs.textContent = "Yeniden bağlanıyor";
+        clearTimeout(reconnectTimer);
+        reconnectTimer = setTimeout(connectWS, 3000);
+      };
+    }
+
+    function initTradingView(){
+      if(typeof TradingView === "undefined") return;
+      new TradingView.widget({
+        autosize: true,
+        symbol: "BINANCE:BTCUSDT",
+        interval: "60",
+        timezone: "Europe/Berlin",
+        theme: "dark",
+        style: "1",
+        locale: "tr",
+        toolbar_bg: "#0a1321",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        allow_symbol_change: false,
+        container_id: "tradingview_btc"
+      });
+    }
+
+    connectWS();
+    refreshRest();
+    setInterval(refreshRest, 60000);
+    window.addEventListener("load", initTradingView);
+  </script>
 </body>
 </html>
