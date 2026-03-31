@@ -1,872 +1,150 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>xd3-s1.1 | BTC Mobile Pro Panel</title>
-  <style>
-    :root{
-      --bg:#07111c;
-      --bg2:#0b1624;
-      --card:#101d2f;
-      --card2:#0d1828;
-      --line:#1f3147;
-      --text:#eef4ff;
-      --muted:#8ea1bc;
-      --green:#16c784;
-      --red:#ea3943;
-      --yellow:#f5b301;
-      --blue:#4da3ff;
-      --purple:#8b7bff;
-      --radius:18px;
-      --shadow:0 10px 24px rgba(0,0,0,.22);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTC PRO PANEL xd3-s1.1.1</title>
 
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{
-      margin:0;
-      background:linear-gradient(180deg,var(--bg),#091321 45%,#0a1422);
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
-      min-height:100%;
-    }
-    body{
-      padding:max(12px, env(safe-area-inset-top)) 12px max(96px, env(safe-area-inset-bottom)) 12px;
-    }
-    button,input{font:inherit}
-    button{
-      appearance:none;
-      -webkit-appearance:none;
-      border:none;
-      outline:none;
-      cursor:pointer;
-    }
-    .app{max-width:460px;margin:0 auto}
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      margin-bottom:12px;min-height:54px;
-    }
-    .brand{
-      display:flex;flex-direction:column;gap:2px;
-    }
-    .brand strong{font-size:20px;font-weight:900;letter-spacing:.2px}
-    .brand span{font-size:11px;color:var(--muted)}
-    .icon-btn{
-      width:42px;height:42px;border-radius:14px;border:1px solid var(--line);
-      background:rgba(255,255,255,.03);color:var(--text);
-      display:flex;align-items:center;justify-content:center;font-size:18px;
-    }
-
-    .status-wrap{
-      position:sticky;top:max(0px, env(safe-area-inset-top));
-      z-index:30;padding-top:4px;margin-bottom:12px;
-      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    }
-    .status-card{
-      background:linear-gradient(180deg,#122034,#0d1828);
-      border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:var(--shadow);
-    }
-    .price-row{
-      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;
-    }
-    .price-main small,.section-sub,.k,.metric-card .label{
-      color:var(--muted);font-size:11px;display:block;
-    }
-    .price-main small{margin-bottom:4px}
-    .price-value{
-      font-size:34px;line-height:1;font-weight:900;margin-bottom:6px;word-break:break-word;
-    }
-    .change{font-size:15px;font-weight:800}
-    .chip{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:8px 10px;min-height:34px;border-radius:999px;
-      border:1px solid var(--line);background:rgba(255,255,255,.04);
-      font-size:12px;font-weight:700;white-space:nowrap;
-    }
-    .green{color:var(--green)}
-    .red{color:var(--red)}
-    .yellow{color:var(--yellow)}
-    .blue{color:var(--blue)}
-    .purple{color:var(--purple)}
-    .muted{color:var(--muted)}
-
-    .status-grid{
-      display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
-    }
-    .status-box{
-      background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.04);
-      border-radius:14px;padding:10px 8px;min-height:66px;
-    }
-    .status-box .k{
-      margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;
-    }
-    .status-box .v{
-      font-size:13px;font-weight:800;line-height:1.2;word-break:break-word;
-    }
-
-    .tabs-wrap{
-      position:sticky;top:220px;z-index:25;margin-bottom:12px;padding:6px 0;
-      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    }
-    .tabs{
-      display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;
-    }
-    .tabs::-webkit-scrollbar{display:none}
-    .tab{
-      flex:0 0 auto;min-width:max-content;padding:11px 14px;border-radius:999px;
-      border:1px solid var(--line);background:#0d1828;color:var(--muted);
-      font-size:13px;font-weight:700;
-    }
-    .tab.active{background:#15263d;color:var(--text);box-shadow:0 0 0 1px rgba(77,163,255,.15) inset}
-
-    .page{display:none;animation:fade .18s ease}
-    .page.active{display:block}
-    @keyframes fade{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-    .section{margin-bottom:14px}
-    .section-title{font-size:16px;font-weight:800;margin:0 0 10px}
-    .card{
-      background:linear-gradient(180deg,var(--card),var(--card2));
-      border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);
-    }
-    .card + .card{margin-top:12px}
-
-    .state-box,.metric-grid,.two-col,.ma-grid,.btn-row{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;
-    }
-    .metric-card{
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);
-      border-radius:14px;padding:12px;min-height:84px;
-    }
-    .metric-card .value{
-      font-size:18px;font-weight:900;line-height:1.2;word-break:break-word;margin-top:8px;
-    }
-    .metric-card .sub{
-      margin-top:6px;color:var(--muted);font-size:11px;
-    }
-
-    .chart-toolbar{
-      display:flex;gap:8px;overflow:auto;padding-bottom:2px;margin-bottom:10px;scrollbar-width:none;
-    }
-    .chart-toolbar::-webkit-scrollbar{display:none}
-    .pill{
-      flex:0 0 auto;padding:9px 12px;border-radius:999px;border:1px solid var(--line);
-      background:rgba(255,255,255,.03);color:var(--text);font-size:12px;font-weight:700;
-    }
-    .pill.active{background:#15263d}
-
-    .chart-box,.placeholder-medium,.heatmap-box,.depth-box,.rsi-box{
-      border-radius:16px;border:1px dashed rgba(255,255,255,.12);
-      display:flex;align-items:center;justify-content:center;color:var(--muted);
-      text-align:center;padding:14px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-    }
-    .chart-box,.heatmap-box,.depth-box{height:260px}
-    .placeholder-medium,.rsi-box{height:160px}
-    .rsi-box{height:110px;margin-top:12px;background:linear-gradient(180deg, rgba(139,123,255,.05), rgba(255,255,255,.01))}
-
-    .ma-head{display:flex;gap:8px;margin-bottom:10px}
-    .ma-head button{
-      flex:1;border-radius:12px;padding:11px 12px;font-size:13px;font-weight:800;
-      color:var(--text);background:#122239;border:1px solid var(--line);
-    }
-    .ma-head button.active{background:#1a3150}
-
-    .input-card{
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);
-      border-radius:14px;padding:10px;
-    }
-    .input-card label{
-      display:block;font-size:11px;color:var(--muted);margin-bottom:8px;
-    }
-    .input-card input{
-      width:100%;height:42px;border:none;outline:none;border-radius:12px;
-      background:#0d1828;color:var(--text);padding:0 12px;font-size:15px;font-weight:700;border:1px solid var(--line);
-    }
-
-    .btn{
-      height:46px;border-radius:14px;background:#162740;color:var(--text);
-      font-size:14px;font-weight:800;border:1px solid var(--line);
-    }
-    .btn.primary{background:#1a3150}
-
-    .list{display:flex;flex-direction:column;gap:8px}
-    .list-row{
-      display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;
-      padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;
-    }
-    .list-row:last-child{border-bottom:none}
-
-    .bottom-bar{
-      position:fixed;left:0;right:0;bottom:0;z-index:40;
-      padding:8px 12px max(10px, env(safe-area-inset-bottom)) 12px;
-      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      background:linear-gradient(180deg, rgba(7,17,28,.1), rgba(7,17,28,.72));
-    }
-    .bottom-inner{
-      max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
-    }
-    .bottom-item{
-      border:1px solid var(--line);background:#0e1a2a;color:var(--muted);
-      border-radius:16px;min-height:52px;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:700;
-    }
-    .bottom-item.active{color:var(--text);background:#15263d}
-
-    @media (max-width:390px){
-      .status-grid{grid-template-columns:repeat(2,1fr)}
-      .state-box,.metric-grid,.two-col,.ma-grid,.btn-row{grid-template-columns:1fr}
-      .price-value{font-size:30px}
-      .tabs-wrap{top:280px}
-    }
-  </style>
+<style>
+body{
+    margin:0;
+    background:#07111c;
+    color:white;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+}
+.container{
+    max-width:420px;
+    margin:auto;
+    padding:15px;
+}
+.card{
+    background:#101d2f;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:12px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.box{
+    background:#0d1828;
+    padding:12px;
+    border-radius:12px;
+    text-align:center;
+}
+.price{
+    font-size:32px;
+    font-weight:bold;
+}
+.tabs button{
+    padding:10px;
+    margin:5px;
+    border-radius:20px;
+    border:none;
+    background:#0d1828;
+    color:white;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand">
-        <strong>BTC PRO PANEL</strong>
-        <span>xd3-s1.1</span>
-      </div>
-      <button class="icon-btn" type="button">⚙️</button>
-    </div>
+<div class="container">
 
-    <div class="status-wrap">
-      <div class="status-card">
-        <div class="price-row">
-          <div class="price-main">
-            <small>BTC Canlı Fiyat</small>
-            <div class="price-value" id="livePrice">$...</div>
-            <div class="change" id="liveChange">Yükleniyor...</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-            <span class="chip" id="trendChip">Trend: Neutral</span>
-            <span class="chip" id="riskChip">Risk: Medium</span>
-          </div>
-        </div>
+<div class="card">
+    <h2>BTC PRO PANEL xd3-s1.1.1</h2>
+    <div class="price" id="livePrice">$...</div>
+    <div id="liveChange">...</div>
+</div>
 
-        <div class="status-grid">
-          <div class="status-box"><div class="k">Spot</div><div class="v" id="spotPrice">$...</div></div>
-          <div class="status-box"><div class="k">Futures</div><div class="v" id="futuresPrice">$...</div></div>
-          <div class="status-box"><div class="k">Basis</div><div class="v" id="basisValue">0.00</div></div>
-          <div class="status-box"><div class="k">24H</div><div class="v" id="stat24h">-</div></div>
+<div class="card grid">
+    <div class="box">Spot<br><span id="spotPrice">-</span></div>
+    <div class="box">Futures<br><span id="futuresPrice">-</span></div>
+    <div class="box">Basis<br><span id="basisValue">-</span></div>
+    <div class="box">Funding<br><span id="fundingValue">-</span></div>
+    <div class="box">OI<br><span id="oiValue">-</span></div>
+    <div class="box">Index<br><span id="indexPriceBox">-</span></div>
+</div>
 
-          <div class="status-box"><div class="k">Funding</div><div class="v" id="fundingValue">-</div></div>
-          <div class="status-box"><div class="k">OI</div><div class="v" id="oiValue">-</div></div>
-          <div class="status-box"><div class="k">L/S</div><div class="v" id="lsValue">50/50</div></div>
-          <div class="status-box"><div class="k">F&G</div><div class="v" id="fgValue">-</div></div>
+</div>
 
-          <div class="status-box"><div class="k">DOM</div><div class="v" id="domValue">-</div></div>
-          <div class="status-box"><div class="k">Momentum</div><div class="v" id="momentumValue">-</div></div>
-          <div class="status-box"><div class="k">Squeeze</div><div class="v" id="squeezeValue">-</div></div>
-          <div class="status-box"><div class="k">WS</div><div class="v green" id="wsState">Connecting</div></div>
-        </div>
-      </div>
-    </div>
+<script>
+let spotWS;
+let futuresWS;
+let currentSpotPrice = null;
+let currentFuturesPrice = null;
 
-    <div class="tabs-wrap">
-      <div class="tabs">
-        <button class="tab active" data-tab="overview" type="button">Overview</button>
-        <button class="tab" data-tab="chart" type="button">Chart</button>
-        <button class="tab" data-tab="spot" type="button">Spot</button>
-        <button class="tab" data-tab="futures" type="button">Futures</button>
-        <button class="tab" data-tab="liquidity" type="button">Liquidity</button>
-        <button class="tab" data-tab="orderflow" type="button">Orderflow</button>
-        <button class="tab" data-tab="macro" type="button">Macro</button>
-        <button class="tab" data-tab="alerts" type="button">Alerts</button>
-      </div>
-    </div>
+function fmtUsd(n){
+    return "$" + Number(n).toLocaleString("en-US",{maximumFractionDigits:2});
+}
 
-    <main>
-      <section class="page active" id="overview">
-        <div class="section">
-          <div class="card">
-            <h2 class="section-title">Market State</h2>
-            <div class="state-box">
-              <div class="metric-card"><div class="label">Trend</div><div class="value blue" id="ovTrend">Neutral</div><div class="sub">Bullish / Bearish / Neutral</div></div>
-              <div class="metric-card"><div class="label">Risk</div><div class="value yellow" id="ovRisk">Medium</div><div class="sub">Low / Medium / High</div></div>
-              <div class="metric-card"><div class="label">Spot Confirmation</div><div class="value green" id="ovSpotConfirm">-</div><div class="sub">Gerçek alım teyidi</div></div>
-              <div class="metric-card"><div class="label">Futures Bias</div><div class="value red" id="ovFuturesBias">-</div><div class="sub">Long / Short baskısı</div></div>
-              <div class="metric-card"><div class="label">Momentum</div><div class="value blue" id="ovMomentum">-</div><div class="sub">Weak / Medium / Strong</div></div>
-              <div class="metric-card"><div class="label">Squeeze Risk</div><div class="value yellow" id="ovSqueeze">-</div><div class="sub">Sıkışma riski</div></div>
-            </div>
-          </div>
-        </div>
+function connectSpot(){
+    if(spotWS) spotWS.close();
 
-        <div class="section">
-          <div class="metric-grid">
-            <div class="metric-card"><div class="label">Spot Price</div><div class="value" id="ovSpotPrice">$...</div></div>
-            <div class="metric-card"><div class="label">Futures Price</div><div class="value" id="ovFuturesPrice">$...</div></div>
-            <div class="metric-card"><div class="label">Basis</div><div class="value" id="ovBasis">0.00</div></div>
-            <div class="metric-card"><div class="label">24H Change</div><div class="value" id="ov24h">-</div></div>
+    spotWS = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
 
-            <div class="metric-card"><div class="label">Spot Volume</div><div class="value" id="ovSpotVol">-</div></div>
-            <div class="metric-card"><div class="label">Futures Volume</div><div class="value" id="ovFutVol">-</div></div>
-            <div class="metric-card"><div class="label">Open Interest</div><div class="value" id="ovOI">-</div></div>
-            <div class="metric-card"><div class="label">OI Delta</div><div class="value" id="ovOIDelta">-</div></div>
+    spotWS.onmessage = (e)=>{
+        const data = JSON.parse(e.data);
+        const price = Number(data.p);
+        currentSpotPrice = price;
 
-            <div class="metric-card"><div class="label">Funding</div><div class="value" id="ovFunding">-</div></div>
-            <div class="metric-card"><div class="label">L/S Ratio</div><div class="value" id="ovLS">50/50</div></div>
-            <div class="metric-card"><div class="label">Fear & Greed</div><div class="value" id="ovFG">-</div></div>
-            <div class="metric-card"><div class="label">Dominance</div><div class="value" id="ovDom">-</div></div>
+        document.getElementById("livePrice").innerText = fmtUsd(price);
+        document.getElementById("spotPrice").innerText = fmtUsd(price);
 
-            <div class="metric-card"><div class="label">Risk Score</div><div class="value yellow" id="ovRiskScore">-</div></div>
-            <div class="metric-card"><div class="label">Trend Score</div><div class="value blue" id="ovTrendScore">-</div></div>
-            <div class="metric-card"><div class="label">Last REST Update</div><div class="value" id="ovUpdate">-</div></div>
-            <div class="metric-card"><div class="label">Version</div><div class="value purple">xd3-s1.1</div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="chart">
-        <div class="card">
-          <h2 class="section-title">Chart</h2>
-          <div class="chart-toolbar" id="tfBar">
-            <button class="pill active" data-tf="1m" type="button">1m</button>
-            <button class="pill" data-tf="5m" type="button">5m</button>
-            <button class="pill" data-tf="15m" type="button">15m</button>
-            <button class="pill" data-tf="1h" type="button">1H</button>
-            <button class="pill" data-tf="4h" type="button">4H</button>
-            <button class="pill" data-tf="1d" type="button">1D</button>
-          </div>
-          <div class="chart-toolbar" id="marketBar">
-            <button class="pill active" data-market="spot" type="button">Spot</button>
-            <button class="pill" data-market="futures" type="button">Futures</button>
-            <button class="pill" data-market="overlay" type="button">Overlay</button>
-          </div>
-          <div class="chart-box" id="chartBox">Grafik entegrasyonu sonraki sürümde</div>
-          <div class="rsi-box" id="rsiBox">RSI paneli sonraki sürümde</div>
-        </div>
-
-        <div class="card">
-          <h2 class="section-title">MA Controls</h2>
-          <div class="ma-head">
-            <button id="emaTab" class="active" type="button">EMA</button>
-            <button id="smaTab" type="button">SMA</button>
-          </div>
-
-          <div class="ma-grid" id="emaGrid">
-            <div class="input-card"><label>EMA 1</label><input id="ema1" type="number" value="20"></div>
-            <div class="input-card"><label>EMA 2</label><input id="ema2" type="number" value="50"></div>
-            <div class="input-card"><label>EMA 3</label><input id="ema3" type="number" value="111"></div>
-            <div class="input-card"><label>EMA 4</label><input id="ema4" type="number" value="200"></div>
-            <div class="input-card"><label>EMA 5</label><input id="ema5" type="number" value="355"></div>
-            <div class="input-card"><label>EMA 6</label><input id="ema6" type="number" value="777"></div>
-          </div>
-
-          <div class="ma-grid" id="smaGrid" style="display:none; margin-top:10px;">
-            <div class="input-card"><label>SMA 1</label><input id="sma1" type="number" value="21"></div>
-            <div class="input-card"><label>SMA 2</label><input id="sma2" type="number" value="55"></div>
-            <div class="input-card"><label>SMA 3</label><input id="sma3" type="number" value="100"></div>
-            <div class="input-card"><label>SMA 4</label><input id="sma4" type="number" value="200"></div>
-            <div class="input-card"><label>SMA 5</label><input id="sma5" type="number" value="300"></div>
-            <div class="input-card"><label>SMA 6</label><input id="sma6" type="number" value="400"></div>
-          </div>
-
-          <div class="btn-row">
-            <button class="btn primary" id="applyMA" type="button">Uygula</button>
-            <button class="btn" id="saveMA" type="button">Kaydet</button>
-            <button class="btn" id="resetMA" type="button">Sıfırla</button>
-            <button class="btn" id="presetMA" type="button">Preset</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="spot">
-        <div class="card">
-          <h2 class="section-title">Spot Summary</h2>
-          <div class="metric-grid">
-            <div class="metric-card"><div class="label">Spot Volume</div><div class="value" id="spotVolBox">-</div></div>
-            <div class="metric-card"><div class="label">Buy/Sell Delta</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">Spot CVD</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">Large Orders</div><div class="value">Yakında</div></div>
-          </div>
-        </div>
-        <div class="card"><h2 class="section-title">Spot Order Book</h2><div class="placeholder-medium">Sonraki sürüm</div></div>
-        <div class="card"><h2 class="section-title">Spot Depth</h2><div class="depth-box">Sonraki sürüm</div></div>
-      </section>
-
-      <section class="page" id="futures">
-        <div class="card">
-          <h2 class="section-title">Futures Summary</h2>
-          <div class="metric-grid">
-            <div class="metric-card"><div class="label">Funding</div><div class="value" id="futFundingBox">-</div></div>
-            <div class="metric-card"><div class="label">Open Interest</div><div class="value" id="futOIBox">-</div></div>
-            <div class="metric-card"><div class="label">OI Delta</div><div class="value" id="futOIDeltaBox">-</div></div>
-            <div class="metric-card"><div class="label">L/S Ratio</div><div class="value" id="futLSBox">50/50</div></div>
-
-            <div class="metric-card"><div class="label">Mark Price</div><div class="value" id="markPriceBox">-</div></div>
-            <div class="metric-card"><div class="label">Index Price</div><div class="value" id="indexPriceBox">-</div></div>
-            <div class="metric-card"><div class="label">Futures Volume</div><div class="value" id="futVolBox">-</div></div>
-            <div class="metric-card"><div class="label">Squeeze Risk</div><div class="value yellow" id="futSqueezeBox">-</div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="liquidity">
-        <div class="card">
-          <h2 class="section-title">Liquidity Summary</h2>
-          <div class="two-col">
-            <div class="metric-card"><div class="label">Upper Cluster</div><div class="value" id="liqUpper">$-</div></div>
-            <div class="metric-card"><div class="label">Lower Cluster</div><div class="value" id="liqLower">$-</div></div>
-          </div>
-        </div>
-        <div class="card"><h2 class="section-title">Liquidity Heatmap</h2><div class="heatmap-box">Sonraki sürüm</div></div>
-        <div class="card"><h2 class="section-title">Liquidation Heatmap</h2><div class="heatmap-box">Sonraki sürüm</div></div>
-      </section>
-
-      <section class="page" id="orderflow">
-        <div class="card">
-          <h2 class="section-title">Orderflow Summary</h2>
-          <div class="metric-grid">
-            <div class="metric-card"><div class="label">Buy Pressure</div><div class="value green">Yakında</div></div>
-            <div class="metric-card"><div class="label">Sell Pressure</div><div class="value red">Yakında</div></div>
-            <div class="metric-card"><div class="label">Volume Delta</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">CVD</div><div class="value">Yakında</div></div>
-          </div>
-        </div>
-        <div class="card">
-          <h2 class="section-title">Recent Trades / Tape</h2>
-          <div class="list" id="recentTrades">
-            <div class="list-row"><span>Bekleniyor</span><span>-</span><span class="muted">-</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="macro">
-        <div class="card">
-          <h2 class="section-title">Macro State</h2>
-          <div class="metric-grid">
-            <div class="metric-card"><div class="label">DXY</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">SP500</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">Nasdaq</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">Gold</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">ETF Flow</div><div class="value">Yakında</div></div>
-            <div class="metric-card"><div class="label">Correlation</div><div class="value">Yakında</div></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="alerts">
-        <div class="card">
-          <h2 class="section-title">Quick Alert Create</h2>
-          <div class="metric-grid">
-            <div class="input-card"><label>Price Alert</label><input type="text" placeholder="Örn: 70000"></div>
-            <div class="input-card"><label>RSI Alert</label><input type="text" placeholder="Örn: 70"></div>
-            <div class="input-card"><label>Funding Alert</label><input type="text" placeholder="Örn: 0.03"></div>
-            <div class="input-card"><label>OI Alert</label><input type="text" placeholder="Örn: +5%"></div>
-          </div>
-          <div class="btn-row">
-            <button class="btn primary" type="button">Alarm Oluştur</button>
-            <button class="btn" type="button">Temizle</button>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <div class="bottom-bar">
-    <div class="bottom-inner">
-      <button class="bottom-item active" data-tab-link="overview" type="button">🏠<span>Home</span></button>
-      <button class="bottom-item" data-tab-link="chart" type="button">📈<span>Chart</span></button>
-      <button class="bottom-item" data-tab-link="liquidity" type="button">💧<span>Liquidity</span></button>
-      <button class="bottom-item" data-tab-link="alerts" type="button">🔔<span>Alerts</span></button>
-      <button class="bottom-item" data-tab-link="macro" type="button">⚙️<span>Macro</span></button>
-    </div>
-  </div>
-
-  <script>
-    const tabs = document.querySelectorAll('.tab');
-    const pages = document.querySelectorAll('.page');
-    const bottomItems = document.querySelectorAll('.bottom-item');
-
-    function activateTab(id){
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
-      pages.forEach(p => p.classList.toggle('active', p.id === id));
-      bottomItems.forEach(b => b.classList.toggle('active', b.dataset.tabLink === id));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    tabs.forEach(tab => tab.addEventListener('click', () => activateTab(tab.dataset.tab)));
-    bottomItems.forEach(item => item.addEventListener('click', () => activateTab(item.dataset.tabLink)));
-
-    const fmtUsd = (n, d=2) => {
-      const v = Number(n);
-      if (!Number.isFinite(v)) return '-';
-      return '$' + v.toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+        updateBasis();
     };
 
-    const fmtShortUsd = (n) => {
-      const v = Number(n);
-      if (!Number.isFinite(v)) return '-';
-      const abs = Math.abs(v);
-      if (abs >= 1e12) return '$' + (v/1e12).toFixed(2) + 'T';
-      if (abs >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
-      if (abs >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
-      return fmtUsd(v, 0);
+    spotWS.onclose = ()=>{
+        setTimeout(connectSpot,3000);
+    };
+}
+
+function connectFutures(){
+    if(futuresWS) futuresWS.close();
+
+    futuresWS = new WebSocket("wss://fstream.binance.com/ws/btcusdt@markPrice");
+
+    futuresWS.onmessage = (e)=>{
+        const data = JSON.parse(e.data);
+
+        const markPrice = Number(data.p);
+        currentFuturesPrice = markPrice;
+
+        document.getElementById("futuresPrice").innerText = fmtUsd(markPrice);
+        document.getElementById("indexPriceBox").innerText = fmtUsd(data.i);
+
+        const funding = Number(data.r) * 100;
+        document.getElementById("fundingValue").innerText = funding.toFixed(4) + "%";
+
+        updateBasis();
     };
 
-    const fmtPct = (n, d=2) => {
-      const v = Number(n);
-      if (!Number.isFinite(v)) return '-';
-      return v.toFixed(d) + '%';
+    futuresWS.onclose = ()=>{
+        setTimeout(connectFutures,3000);
     };
+}
 
-    function setValueWithColor(id, value, n){
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = value;
-      el.classList.remove('green','red','yellow','blue');
-      const v = Number(n);
-      if (!Number.isFinite(v)) {
-        el.classList.add('yellow');
-        return;
-      }
-      if (v > 0) el.classList.add('green');
-      else if (v < 0) el.classList.add('red');
-      else el.classList.add('yellow');
+function updateBasis(){
+    if(currentSpotPrice && currentFuturesPrice){
+        const basis = currentFuturesPrice - currentSpotPrice;
+        document.getElementById("basisValue").innerText = basis.toFixed(2);
     }
+}
 
-    function classifyFearGreed(v){
-      const x = Number(v);
-      if (!Number.isFinite(x)) return 'Unknown';
-      if (x >= 75) return 'Extreme Greed';
-      if (x >= 55) return 'Greed';
-      if (x >= 45) return 'Neutral';
-      if (x >= 25) return 'Fear';
-      return 'Extreme Fear';
-    }
+async function loadOI(){
+    try{
+        const r = await fetch("https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT");
+        const d = await r.json();
+        document.getElementById("oiValue").innerText = (Number(d.openInterest)/1000).toFixed(2)+"K";
+    }catch{}
+}
 
-    function calcTrend(spot, fut, funding){
-      if (!Number.isFinite(spot) || !Number.isFinite(fut) || !Number.isFinite(funding)) return 'Neutral';
-      if (spot > fut && funding < 0) return 'Bullish';
-      if (spot < fut && funding > 0.02) return 'Bearish';
-      return 'Neutral';
-    }
+connectSpot();
+connectFutures();
+loadOI();
+setInterval(loadOI,60000);
+</script>
 
-    function calcRisk(change24, funding, oiDelta){
-      let score = 35;
-      if (Math.abs(change24) > 2) score += 10;
-      if (Math.abs(change24) > 4) score += 10;
-      if (Math.abs(funding) > 0.01) score += 10;
-      if (Math.abs(funding) > 0.03) score += 10;
-      if (Math.abs(oiDelta) > 2) score += 10;
-      if (Math.abs(oiDelta) > 5) score += 10;
-      if (score < 40) return {label:'Low', score};
-      if (score < 70) return {label:'Medium', score};
-      return {label:'High', score};
-    }
-
-    function calcMomentum(change24){
-      const a = Math.abs(Number(change24) || 0);
-      if (a < 1) return 'Weak';
-      if (a < 3) return 'Medium';
-      return 'Strong';
-    }
-
-    function calcSqueeze(funding, oiDelta, ls){
-      const l = Number(ls.long);
-      const s = Number(ls.short);
-      if (Math.abs(funding) > 0.02 && Math.abs(oiDelta) > 3 && Math.abs(l - s) > 4) return 'High';
-      if (Math.abs(funding) > 0.01 || Math.abs(oiDelta) > 1.5) return 'Medium';
-      return 'Low';
-    }
-
-    async function getJson(url, timeoutMs = 10000){
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const r = await fetch(url, { cache:'no-store', signal: controller.signal });
-        if (!r.ok) throw new Error('Fetch failed: ' + r.status);
-        return await r.json();
-      } finally {
-        clearTimeout(timeout);
-      }
-    }
-
-    const recentTradesEl = document.getElementById('recentTrades');
-    let lastOI = null;
-    let ws = null;
-    let wsReconnectTimer = null;
-    const tradeBuffer = [];
-
-    function renderTrades(){
-      if (!recentTradesEl) return;
-      if (!tradeBuffer.length) {
-        recentTradesEl.innerHTML = '<div class="list-row"><span>Bekleniyor</span><span>-</span><span class="muted">-</span></div>';
-        return;
-      }
-      recentTradesEl.innerHTML = '';
-      tradeBuffer.forEach(t => {
-        const row = document.createElement('div');
-        row.className = 'list-row';
-        row.innerHTML = `
-          <span class="${t.side === 'BUY' ? 'green' : 'red'}">${t.side}</span>
-          <span>${fmtUsd(t.price,2)}</span>
-          <span class="muted">${Number(t.qty).toFixed(5)}</span>
-        `;
-        recentTradesEl.appendChild(row);
-      });
-    }
-
-    async function refreshData(){
-      try{
-        const [
-          cgCoin,
-          cgGlobal,
-          futPremium,
-          futOI,
-          spot24,
-          fut24,
-          fg
-        ] = await Promise.all([
-          getJson('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false'),
-          getJson('https://api.coingecko.com/api/v3/global'),
-          getJson('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT'),
-          getJson('https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT'),
-          getJson('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
-          getJson('https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=BTCUSDT'),
-          getJson('https://api.alternative.me/fng/?limit=1')
-        ]);
-
-        const spotPrice = Number(spot24?.lastPrice);
-        const futuresPrice = Number(futPremium?.markPrice);
-        const basis = futuresPrice - spotPrice;
-        const change24 = Number(spot24?.priceChangePercent);
-        const spotVol = Number(spot24?.quoteVolume);
-        const futVol = Number(fut24?.quoteVolume);
-        const funding = Number(futPremium?.lastFundingRate) * 100;
-        const oi = Number(futOI?.openInterest);
-        const oiDelta = lastOI && Number.isFinite(lastOI) && lastOI !== 0 ? ((oi - lastOI) / lastOI) * 100 : 0;
-        lastOI = oi;
-
-        const dom = Number(cgGlobal?.data?.market_cap_percentage?.btc);
-        const fgValue = Number(fg?.data?.[0]?.value);
-        const fgText = classifyFearGreed(fgValue);
-
-        const lsApprox = Number.isFinite(funding)
-          ? (funding >= 0
-            ? { long: Math.min(60, 50 + Math.abs(funding * 180)), short: Math.max(40, 50 - Math.abs(funding * 180)) }
-            : { long: Math.max(40, 50 - Math.abs(funding * 180)), short: Math.min(60, 50 + Math.abs(funding * 180)) })
-          : { long: 50, short: 50 };
-
-        const trend = calcTrend(spotPrice, futuresPrice, funding);
-        const risk = calcRisk(change24, funding, oiDelta);
-        const momentum = calcMomentum(change24);
-        const squeeze = calcSqueeze(funding, oiDelta, lsApprox);
-
-        document.getElementById('spotPrice').textContent = fmtUsd(spotPrice, 2);
-        document.getElementById('futuresPrice').textContent = fmtUsd(futuresPrice, 2);
-        document.getElementById('basisValue').textContent = Number.isFinite(basis) ? basis.toFixed(2) : '-';
-        setValueWithColor('stat24h', fmtPct(change24), change24);
-        document.getElementById('fundingValue').textContent = fmtPct(funding, 4);
-        document.getElementById('oiValue').textContent = Number.isFinite(oi) ? (oi/1000).toFixed(2) + 'K' : '-';
-        document.getElementById('lsValue').textContent = lsApprox.long.toFixed(1) + '/' + lsApprox.short.toFixed(1);
-        document.getElementById('fgValue').textContent = Number.isFinite(fgValue) ? fgValue : '-';
-        document.getElementById('domValue').textContent = Number.isFinite(dom) ? dom.toFixed(2) + '%' : '-';
-        document.getElementById('momentumValue').textContent = momentum;
-        document.getElementById('squeezeValue').textContent = squeeze;
-
-        const trendChip = document.getElementById('trendChip');
-        trendChip.textContent = 'Trend: ' + trend;
-        trendChip.className = 'chip ' + (trend === 'Bullish' ? 'green' : trend === 'Bearish' ? 'red' : 'blue');
-
-        const riskChip = document.getElementById('riskChip');
-        riskChip.textContent = 'Risk: ' + risk.label;
-        riskChip.className = 'chip ' + (risk.label === 'Low' ? 'green' : risk.label === 'Medium' ? 'yellow' : 'red');
-
-        document.getElementById('ovTrend').textContent = trend;
-        document.getElementById('ovTrend').className = 'value ' + (trend === 'Bullish' ? 'green' : trend === 'Bearish' ? 'red' : 'blue');
-
-        document.getElementById('ovRisk').textContent = risk.label;
-        document.getElementById('ovRisk').className = 'value ' + (risk.label === 'Low' ? 'green' : risk.label === 'Medium' ? 'yellow' : 'red');
-
-        document.getElementById('ovSpotConfirm').textContent = Number.isFinite(spotVol) && Number.isFinite(futVol) ? (spotVol > futVol * 0.2 ? 'Yes' : 'Weak') : '-';
-        document.getElementById('ovFuturesBias').textContent = Number.isFinite(funding) ? (funding >= 0 ? 'Long Heavy' : 'Short Heavy') : '-';
-        document.getElementById('ovMomentum').textContent = momentum;
-        document.getElementById('ovSqueeze').textContent = squeeze;
-
-        document.getElementById('ovSpotPrice').textContent = fmtUsd(spotPrice, 2);
-        document.getElementById('ovFuturesPrice').textContent = fmtUsd(futuresPrice, 2);
-        document.getElementById('ovBasis').textContent = Number.isFinite(basis) ? basis.toFixed(2) : '-';
-        setValueWithColor('ov24h', fmtPct(change24), change24);
-
-        document.getElementById('ovSpotVol').textContent = fmtShortUsd(spotVol);
-        document.getElementById('ovFutVol').textContent = fmtShortUsd(futVol);
-        document.getElementById('ovOI').textContent = Number.isFinite(oi) ? (oi/1000).toFixed(2) + 'K' : '-';
-        setValueWithColor('ovOIDelta', fmtPct(oiDelta), oiDelta);
-
-        document.getElementById('ovFunding').textContent = fmtPct(funding, 4);
-        document.getElementById('ovLS').textContent = lsApprox.long.toFixed(1) + '/' + lsApprox.short.toFixed(1);
-        document.getElementById('ovFG').textContent = Number.isFinite(fgValue) ? (fgValue + ' • ' + fgText) : '-';
-        document.getElementById('ovDom').textContent = Number.isFinite(dom) ? dom.toFixed(2) + '%' : '-';
-        document.getElementById('ovRiskScore').textContent = risk.score + ' / 100';
-        document.getElementById('ovTrendScore').textContent = (
-          trend === 'Bullish' ? 7 :
-          trend === 'Bearish' ? 3 : 5
-        ) + ' / 10';
-        document.getElementById('ovUpdate').textContent = new Date().toLocaleTimeString('tr-TR');
-
-        document.getElementById('spotVolBox').textContent = fmtShortUsd(spotVol);
-        document.getElementById('futFundingBox').textContent = fmtPct(funding, 4);
-        document.getElementById('futOIBox').textContent = Number.isFinite(oi) ? (oi/1000).toFixed(2) + 'K' : '-';
-        setValueWithColor('futOIDeltaBox', fmtPct(oiDelta), oiDelta);
-        document.getElementById('futLSBox').textContent = lsApprox.long.toFixed(1) + '/' + lsApprox.short.toFixed(1);
-        document.getElementById('markPriceBox').textContent = fmtUsd(Number(futPremium?.markPrice), 2);
-        document.getElementById('indexPriceBox').textContent = fmtUsd(Number(futPremium?.indexPrice), 2);
-        document.getElementById('futVolBox').textContent = fmtShortUsd(futVol);
-        document.getElementById('futSqueezeBox').textContent = squeeze;
-
-        document.getElementById('liqUpper').textContent = fmtUsd(Number(spot24?.highPrice), 2);
-        document.getElementById('liqLower').textContent = fmtUsd(Number(spot24?.lowPrice), 2);
-
-        const liveChangeEl = document.getElementById('liveChange');
-        liveChangeEl.textContent = fmtPct(change24);
-        liveChangeEl.classList.remove('green','red','yellow');
-        if (Number.isFinite(change24)) {
-          if (change24 > 0) liveChangeEl.classList.add('green');
-          else if (change24 < 0) liveChangeEl.classList.add('red');
-          else liveChangeEl.classList.add('yellow');
-        } else {
-          liveChangeEl.classList.add('yellow');
-        }
-
-      } catch (err) {
-        console.error('REST error:', err);
-        const wsState = document.getElementById('wsState');
-        if (wsState && wsState.textContent !== 'Live') {
-          wsState.textContent = 'REST Err';
-          wsState.className = 'v red';
-        }
-      }
-    }
-
-    function connectWS(){
-      const wsState = document.getElementById('wsState');
-      try {
-        if (ws) {
-          ws.onclose = null;
-          ws.close();
-        }
-      } catch(_) {}
-
-      ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@trade');
-
-      ws.onopen = () => {
-        wsState.textContent = 'Live';
-        wsState.className = 'v green';
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          const p = Number(data?.p);
-          if (Number.isFinite(p)) {
-            document.getElementById('livePrice').textContent = fmtUsd(p, 2);
-            document.getElementById('spotPrice').textContent = fmtUsd(p, 2);
-            document.getElementById('ovSpotPrice').textContent = fmtUsd(p, 2);
-          }
-
-          tradeBuffer.unshift({
-            side: data?.m ? 'SELL' : 'BUY',
-            price: p,
-            qty: Number(data?.q || 0)
-          });
-          if (tradeBuffer.length > 12) tradeBuffer.pop();
-          renderTrades();
-        } catch (e) {
-          console.error('WS parse error:', e);
-        }
-      };
-
-      ws.onerror = () => {
-        wsState.textContent = 'WS Err';
-        wsState.className = 'v red';
-      };
-
-      ws.onclose = () => {
-        wsState.textContent = 'Reconnect';
-        wsState.className = 'v yellow';
-        clearTimeout(wsReconnectTimer);
-        wsReconnectTimer = setTimeout(connectWS, 3000);
-      };
-    }
-
-    const emaDefaults = [20,50,111,200,355,777];
-    const smaDefaults = [21,55,100,200,300,400];
-
-    function loadMASettings(){
-      let ema = emaDefaults;
-      let sma = smaDefaults;
-      try {
-        ema = JSON.parse(localStorage.getItem('xd3_s11_ema') || 'null') || emaDefaults;
-        sma = JSON.parse(localStorage.getItem('xd3_s11_sma') || 'null') || smaDefaults;
-      } catch(_) {}
-      ema.forEach((v,i)=>document.getElementById('ema'+(i+1)).value=v);
-      sma.forEach((v,i)=>document.getElementById('sma'+(i+1)).value=v);
-    }
-
-    function saveMASettings(){
-      try {
-        const ema = Array.from({length:6}, (_,i)=>Number(document.getElementById('ema'+(i+1)).value || emaDefaults[i]));
-        const sma = Array.from({length:6}, (_,i)=>Number(document.getElementById('sma'+(i+1)).value || smaDefaults[i]));
-        localStorage.setItem('xd3_s11_ema', JSON.stringify(ema));
-        localStorage.setItem('xd3_s11_sma', JSON.stringify(sma));
-        alert('MA ayarları kaydedildi');
-      } catch (e) {
-        alert('Kaydetme sırasında hata oluştu');
-      }
-    }
-
-    document.getElementById('saveMA').addEventListener('click', saveMASettings);
-    document.getElementById('applyMA').addEventListener('click', ()=>alert('Bu sürümde ayarlar kaydedilir; grafik entegrasyonu sonraki sürümde.'));
-    document.getElementById('resetMA').addEventListener('click', ()=>{
-      emaDefaults.forEach((v,i)=>document.getElementById('ema'+(i+1)).value=v);
-      smaDefaults.forEach((v,i)=>document.getElementById('sma'+(i+1)).value=v);
-    });
-    document.getElementById('presetMA').addEventListener('click', ()=>{
-      const emaPreset=[20,50,111,200,355,777];
-      const smaPreset=[21,55,100,200,300,400];
-      emaPreset.forEach((v,i)=>document.getElementById('ema'+(i+1)).value=v);
-      smaPreset.forEach((v,i)=>document.getElementById('sma'+(i+1)).value=v);
-      alert('xd3-s1.1 preset yüklendi');
-    });
-
-    document.getElementById('emaTab').addEventListener('click', ()=>{
-      document.getElementById('emaGrid').style.display='grid';
-      document.getElementById('smaGrid').style.display='none';
-      document.getElementById('emaTab').classList.add('active');
-      document.getElementById('smaTab').classList.remove('active');
-    });
-
-    document.getElementById('smaTab').addEventListener('click', ()=>{
-      document.getElementById('emaGrid').style.display='none';
-      document.getElementById('smaGrid').style.display='grid';
-      document.getElementById('smaTab').classList.add('active');
-      document.getElementById('emaTab').classList.remove('active');
-    });
-
-    document.querySelectorAll('#tfBar .pill').forEach(btn => {
-      btn.addEventListener('click', ()=>{
-        document.querySelectorAll('#tfBar .pill').forEach(x=>x.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('chartBox').textContent = 'Grafik entegrasyonu sonraki sürümde • TF: ' + btn.dataset.tf;
-      });
-    });
-
-    document.querySelectorAll('#marketBar .pill').forEach(btn => {
-      btn.addEventListener('click', ()=>{
-        document.querySelectorAll('#marketBar .pill').forEach(x=>x.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('chartBox').textContent = 'Grafik entegrasyonu sonraki sürümde • Mod: ' + btn.dataset.market.toUpperCase();
-      });
-    });
-
-    loadMASettings();
-    renderTrades();
-    connectWS();
-    refreshData();
-    setInterval(refreshData, 60000);
-  </script>
 </body>
 </html>
