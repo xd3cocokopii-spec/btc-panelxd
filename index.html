@@ -477,7 +477,30 @@
       .state-box,.metric-grid,.two-col,.ma-grid,.btn-row{grid-template-columns:1fr}
       .price-value{font-size:30px}
       .tabs-wrap{top:280px}
-    }
+    }.market-bar{
+  padding:10px;
+  overflow-x:auto;
+}
+
+.asset-select, .tf-select{
+  display:flex;
+  gap:6px;
+  margin-bottom:6px;
+}
+
+.asset, .tf{
+  background:#15263d;
+  border:none;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.asset.active, .tf.active{
+  background:#2e5cff;
+}
   </style>
 </head>
 <body>
@@ -488,9 +511,47 @@
         <span>xd3-s1.2.1</span>
       </div>
       <button class="icon-btn" type="button">⚙️</button>
-    </div>
+    </div><div class="market-bar">
+  <div class="asset-select">
+    <button class="asset active">BTC</button>
+    <button class="asset">ETH</button>
+    <button class="asset">SOL</button>
+    <button class="asset">BNB</button>
+    <button class="asset">XRP</button>
+    <button class="asset">TOTAL</button>
+    <button class="asset">TOTAL2</button>
+    <button class="asset">USDT.D</button>
+    <button class="asset">BTC.D</button>
+    <button class="asset">DXY</button>
+    <button class="asset">SPX</button>
+    <button class="asset">GOLD</button>
+    <button class="asset">HAC</button>
+    <button class="asset">HACD</button>
+  </div>
 
-    <div class="status-wrap">
+  <div class="tf-select">
+    <button class="tf">30s</button>
+    <button class="tf active">1m</button>
+    <button class="tf">3m</button>
+    <button class="tf">5m</button>
+    <button class="tf">15m</button>
+    <button class="tf">30m</button>
+    <button class="tf">1H</button>
+    <button class="tf">2H</button>
+    <button class="tf">3H</button>
+    <button class="tf">4H</button>
+    <button class="tf">6H</button>
+    <button class="tf">8H</button>
+    <button class="tf">12H</button>
+    <button class="tf">1D</button>
+    <button class="tf">3D</button>
+    <button class="tf">1W</button>
+    <button class="tf">1M</button>
+    <button class="tf">2M</button>
+    <button class="tf">3M</button>
+  </div>
+</div>
+    <div class="status-wrap"> 
       <div class="status-card">
         <div class="price-row">
           <div class="price-main">
@@ -595,7 +656,8 @@
             <button class="pill" data-market="overlay" type="button">Overlay</button>
           </div>
 
-          <div class="chart-box" id="chartBox">Candlestick + EMA + SMA + RSI + Volume alanı sonraki sürümde</div>
+          <div class="chart-box" id="chartBox">
+            <div id="tv-chart" style="height:400px;"></div>
           <div class="rsi-box" id="rsiBox">RSI paneli sonraki sürümde</div>
         </div>
 
@@ -1220,7 +1282,7 @@
       btn.addEventListener('click', ()=>{
         document.querySelectorAll('#marketBar .pill').forEach(x=>x.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('chartBox').textContent = 'Chart sonraki sürümde • Mod: ' + btn.dataset.market.toUpperCase();
+         
       });
     });
 
@@ -1230,6 +1292,29 @@
     connectFuturesWS();
     refreshData();
     setInterval(refreshData, 60000);
+    // TradingView Chart
+function loadTradingViewChart(symbol="BINANCE:BTCUSDT", interval="1") {
+  const script = document.createElement('script');
+  script.src = "https://s3.tradingview.com/tv.js";
+  script.onload = function () {
+    new TradingView.widget({
+      container_id: "tv-chart",
+      symbol: symbol,
+      interval: interval,
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      toolbar_bg: "#0b1420",
+      enable_publishing: false,
+      hide_top_toolbar: false,
+      save_image: false
+    });
+  };
+  document.head.appendChild(script);
+}
+
+// Sayfa açılınca grafiği yükle
+loadTradingViewChart();
   </script>
 </body>
 </html>
