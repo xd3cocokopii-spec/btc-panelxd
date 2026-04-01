@@ -1,1 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>BTC PRO PANEL xd3</title>
 
+<style>
+:root{
+  --bg:#07111c;
+  --card:#12233a;
+  --line:#213a5b;
+  --text:#eef4ff;
+  --muted:#94a8c7;
+  --green:#39d98a;
+  --red:#ff5d73;
+  --blue:#4c76ff;
+  --radius:22px;
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#07111c,#04111d 60%, #051321);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+  padding-top:var(--safe-top);
+  padding-bottom:calc(86px + var(--safe-bottom));
+}
+
+.app{
+  width:min(100%, 430px);
+  margin:0 auto;
+  padding:14px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+
+.brand strong{
+  font-size:26px;
+  font-weight:900;
+}
+
+.pill{
+  border:none;
+  background:#162843;
+  color:white;
+  padding:12px 16px;
+  border-radius:16px;
+  margin-right:8px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.pill.active{
+  background:#2e5cff;
+}
+
+.asset-row,.tf-row{
+  overflow-x:auto;
+  white-space:nowrap;
+  margin-bottom:10px;
+}
+
+.status-card{
+  background:#10213a;
+  border-radius:26px;
+  padding:16px;
+  margin-bottom:14px;
+}
+
+.price{
+  font-size:34px;
+  font-weight:900;
+}
+
+.metric-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+.metric-card{
+  background:#0f223c;
+  padding:12px;
+  border-radius:18px;
+}
+
+.tabs{
+  display:flex;
+  overflow-x:auto;
+  margin-bottom:10px;
+}
+
+.tab{
+  background:#0f2138;
+  border:none;
+  color:white;
+  padding:12px 14px;
+  margin-right:8px;
+  border-radius:14px;
+  font-weight:800;
+}
+
+.tab.active{
+  background:#173559;
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.card{
+  background:#0f223c;
+  padding:16px;
+  border-radius:24px;
+  margin-bottom:14px;
+}
+
+.chart-box{
+  height:60svh;
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100% - 20px, 430px);
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  background:#081a2d;
+  padding:10px;
+  border-radius:24px;
+}
+
+.nav-btn{
+  border:none;
+  background:#0f2138;
+  color:white;
+  padding:10px;
+  border-radius:14px;
+}
+.nav-btn.active{background:#173559}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="topbar">
+<div class="brand">
+<strong>BTC PRO PANEL</strong>
+</div>
+<button class="pill">⚙️</button>
+</header>
+
+<div class="asset-row" id="assetRow">
+<button class="pill active" data-asset="BTC">BTC</button>
+<button class="pill" data-asset="ETH">ETH</button>
+<button class="pill" data-asset="SOL">SOL</button>
+<button class="pill" data-asset="BNB">BNB</button>
+<button class="pill" data-asset="XRP">XRP</button>
+<button class="pill" data-asset="TOTAL">TOTAL</button>
+<button class="pill" data-asset="TOTAL2">TOTAL2</button>
+<button class="pill" data-asset="HAC">HAC</button>
+<button class="pill" data-asset="HACD">HACD</button>
+</div>
+
+<div class="tf-row" id="tfRow">
+<button class="pill active" data-tf="1">1m</button>
+<button class="pill" data-tf="5">5m</button>
+<button class="pill" data-tf="15">15m</button>
+<button class="pill" data-tf="60">1H</button>
+<button class="pill" data-tf="240">4H</button>
+<button class="pill" data-tf="D">1D</button>
+<button class="pill" data-tf="W">1W</button>
+<button class="pill" data-tf="2W">2W</button>
+<button class="pill" data-tf="3W">3W</button>
+<button class="pill" data-tf="M">1M</button>
+<button class="pill" data-tf="2M">2M</button>
+<button class="pill" data-tf="3M">3M</button>
+</div>
+
+<div class="status-card">
+<div class="price" id="price">$68,000</div>
+</div>
+
+<div class="tabs">
+<button class="tab active" data-page="overview">Overview</button>
+<button class="tab" data-page="chart">Chart</button>
+<button class="tab" data-page="spot">Spot</button>
+<button class="tab" data-page="futures">Futures</button>
+<button class="tab" data-page="liquidity">Liquidity</button>
+<button class="tab" data-page="alerts">Alerts</button>
+<button class="tab" data-page="macro">Macro</button>
+</div>
+
+<div class="page active" id="page-overview">
+<div class="card">Overview ekranı</div>
+</div>
+
+<div class="page" id="page-chart">
+<div class="card">
+<div class="chart-box" id="tv_chart"></div>
+</div>
+</div>
+
+<div class="page" id="page-spot"><div class="card">Spot ekranı</div></div>
+<div class="page" id="page-futures"><div class="card">Futures ekranı</div></div>
+<div class="page" id="page-liquidity"><div class="card">Liquidity ekranı</div></div>
+<div class="page" id="page-alerts"><div class="card">Alerts ekranı</div></div>
+<div class="page" id="page-macro"><div class="card">Macro ekranı</div></div>
+
+</div>
+
+<div class="bottom-nav">
+<button class="nav-btn active" data-page="overview">Home</button>
+<button class="nav-btn" data-page="chart">Chart</button>
+<button class="nav-btn" data-page="liquidity">Liquidity</button>
+<button class="nav-btn" data-page="alerts">Alerts</button>
+<button class="nav-btn" data-page="macro">Macro</button>
+</div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+let STATE={asset:"BTC",tf:"1"};
+let tv=null;
+
+const SYMBOLS={
+BTC:"BINANCE:BTCUSDT",
+ETH:"BINANCE:ETHUSDT",
+SOL:"BINANCE:SOLUSDT",
+BNB:"BINANCE:BNBUSDT",
+XRP:"BINANCE:XRPUSDT",
+TOTAL:"CRYPTOCAP:TOTAL",
+TOTAL2:"CRYPTOCAP:TOTAL2",
+HAC:"BINANCE:HACUSDT",
+HACD:"BINANCE:HACDUSDT"
+};
+
+function loadChart(){
+if(tv){tv.remove();}
+tv=new TradingView.widget({
+autosize:true,
+symbol:SYMBOLS[STATE.asset],
+interval:STATE.tf,
+container_id:"tv_chart",
+theme:"dark",
+style:"1",
+locale:"en"
+});
+}
+
+document.querySelectorAll("#assetRow .pill").forEach(b=>{
+b.onclick=()=>{
+STATE.asset=b.dataset.asset;
+document.querySelectorAll("#assetRow .pill").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+loadChart();
+};
+});
+
+document.querySelectorAll("#tfRow .pill").forEach(b=>{
+b.onclick=()=>{
+STATE.tf=b.dataset.tf;
+document.querySelectorAll("#tfRow .pill").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+loadChart();
+};
+});
+
+document.querySelectorAll(".tab").forEach(b=>{
+b.onclick=()=>{
+let p=b.dataset.page;
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+document.querySelectorAll(".page").forEach(pg=>pg.classList.remove("active"));
+document.getElementById("page-"+p).classList.add("active");
+};
+});
+
+document.querySelectorAll(".nav-btn").forEach(b=>{
+b.onclick=()=>{
+let p=b.dataset.page;
+document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+document.querySelectorAll(".page").forEach(pg=>pg.classList.remove("active"));
+document.getElementById("page-"+p).classList.add("active");
+};
+});
+
+loadChart();
+</script>
+</body>
+</html>
