@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>BTC PRO PANEL</title>
-
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <style>
@@ -23,10 +21,10 @@ padding:12px;
 padding-bottom:100px;
 }
 
-.top{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
+.row{
+overflow-x:auto;
+white-space:nowrap;
+margin-bottom:8px;
 }
 
 .pill{
@@ -39,15 +37,7 @@ margin-right:6px;
 font-weight:700;
 }
 
-.pill.active{
-background:#2e5cff;
-}
-
-.row{
-overflow-x:auto;
-white-space:nowrap;
-margin-bottom:8px;
-}
+.pill.active{background:#2e5cff;}
 
 .tabs{
 display:flex;
@@ -65,7 +55,7 @@ margin-right:6px;
 font-weight:700;
 }
 
-.tab.active{background:#173559}
+.tab.active{background:#173559;}
 
 .card{
 background:#0f223c;
@@ -75,9 +65,31 @@ margin-bottom:12px;
 }
 
 .chart{
-height:60vh;
+height:55vh;
 border-radius:14px;
 overflow:hidden;
+}
+
+.rsi{
+height:120px;
+background:#081a2d;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-top:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.small{
+background:#081a2d;
+padding:12px;
+border-radius:14px;
 }
 
 .page{display:none}
@@ -105,17 +117,12 @@ padding:10px;
 border-radius:12px;
 }
 
-.nav.active{background:#173559}
+.nav.active{background:#173559;}
 </style>
 </head>
 
 <body>
 <div class="app">
-
-<div class="top">
-<h2>BTC PRO PANEL</h2>
-<button class="pill">⚙️</button>
-</div>
 
 <div class="row" id="assets">
 <button class="pill active" data-a="BTC">BTC</button>
@@ -147,28 +154,80 @@ border-radius:12px;
 <div class="tabs">
 <button class="tab active" data-p="overview">Overview</button>
 <button class="tab" data-p="chart">Chart</button>
-<button class="tab" data-p="spot">Spot</button>
 <button class="tab" data-p="futures">Futures</button>
 <button class="tab" data-p="liquidity">Liquidity</button>
 <button class="tab" data-p="alerts">Alerts</button>
 <button class="tab" data-p="macro">Macro</button>
 </div>
 
+<!-- OVERVIEW -->
 <div class="page active" id="overview">
-<div class="card">Overview ekranı</div>
+<div class="card">
+<h3>Market Overview</h3>
+<div class="grid">
+<div class="small">Funding</div>
+<div class="small">Open Interest</div>
+<div class="small">Long / Short</div>
+<div class="small">Volume</div>
+<div class="small">Liquidations</div>
+<div class="small">Basis</div>
+</div>
+</div>
 </div>
 
+<!-- CHART -->
 <div class="page" id="chart">
 <div class="card">
 <div id="tvchart" class="chart"></div>
+<div class="rsi">RSI Panel</div>
 </div>
 </div>
 
-<div class="page" id="spot"><div class="card">Spot ekranı</div></div>
-<div class="page" id="futures"><div class="card">Futures ekranı</div></div>
-<div class="page" id="liquidity"><div class="card">Liquidity ekranı</div></div>
-<div class="page" id="alerts"><div class="card">Alerts ekranı</div></div>
-<div class="page" id="macro"><div class="card">Macro ekranı</div></div>
+<!-- FUTURES -->
+<div class="page" id="futures">
+<div class="card">
+<h3>Futures Data</h3>
+<div class="grid">
+<div class="small">Funding Rate</div>
+<div class="small">Open Interest</div>
+<div class="small">Long Short Ratio</div>
+<div class="small">Liquidations</div>
+</div>
+</div>
+</div>
+
+<!-- LIQUIDITY -->
+<div class="page" id="liquidity">
+<div class="card">
+<h3>Liquidity Heatmap</h3>
+<div class="small" style="height:200px;">Heatmap burada</div>
+</div>
+</div>
+
+<!-- ALERTS -->
+<div class="page" id="alerts">
+<div class="card">
+<h3>Alerts</h3>
+<div class="small">Funding Alert</div>
+<div class="small">OI Alert</div>
+<div class="small">Liquidation Alert</div>
+</div>
+</div>
+
+<!-- MACRO -->
+<div class="page" id="macro">
+<div class="card">
+<h3>Macro</h3>
+<div class="grid">
+<div class="small">DXY</div>
+<div class="small">SPX</div>
+<div class="small">NASDAQ</div>
+<div class="small">GOLD</div>
+<div class="small">BTC.D</div>
+<div class="small">USDT.D</div>
+</div>
+</div>
+</div>
 
 </div>
 
