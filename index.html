@@ -1,1 +1,934 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>BTC PRO PANEL xd3-s2.0</title>
+  <style>
+    :root{
+      --bg:#07111c;
+      --bg2:#081a2d;
+      --card:#12233a;
+      --card2:#162b45;
+      --line:#213a5b;
+      --text:#eef4ff;
+      --muted:#94a8c7;
+      --green:#39d98a;
+      --red:#ff5d73;
+      --yellow:#ffcc66;
+      --blue:#4c76ff;
+      --blue2:#2d5cff;
+      --radius:22px;
+      --shadow:0 12px 30px rgba(0,0,0,.24);
+      --safe-top:env(safe-area-inset-top, 0px);
+      --safe-bottom:env(safe-area-inset-bottom, 0px);
+    }
 
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(19,55,103,.35), transparent 30%),
+        linear-gradient(180deg,var(--bg),#04111d 60%, #051321);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+      overflow-x:hidden;
+    }
+
+    body{
+      min-height:100svh;
+      padding-top:var(--safe-top);
+      padding-bottom:calc(86px + var(--safe-bottom));
+    }
+
+    button,input,select{
+      font:inherit;
+    }
+
+    .app{
+      width:min(100%, 430px);
+      margin:0 auto;
+      padding:14px 14px 0;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+
+    .brand strong{
+      font-size:27px;
+      line-height:1.05;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+
+    .brand span{
+      color:var(--muted);
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .gear-btn{
+      width:58px;
+      height:58px;
+      flex:0 0 58px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#112744,#0d1e34);
+      color:var(--text);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+    }
+
+    .asset-row,
+    .tf-row,
+    .sub-tf-row{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      scrollbar-width:none;
+    }
+
+    .asset-row::-webkit-scrollbar,
+    .tf-row::-webkit-scrollbar,
+    .sub-tf-row::-webkit-scrollbar{
+      display:none;
+    }
+
+    .asset-row{margin-bottom:12px}
+    .tf-row{margin-bottom:14px}
+
+    .pill{
+      border:none;
+      color:var(--text);
+      background:#162843;
+      border:1px solid rgba(255,255,255,.03);
+      min-width:max-content;
+      padding:13px 18px;
+      border-radius:17px;
+      font-weight:800;
+      font-size:16px;
+      line-height:1;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .pill:active{transform:scale(.98)}
+
+    .pill.active{
+      background:linear-gradient(180deg,#4a73ff,#2e5cff);
+      box-shadow:0 8px 20px rgba(56,96,255,.25);
+    }
+
+    .status-card{
+      background:linear-gradient(180deg,#10243e,#10213a);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:18px 16px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+
+    .status-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .status-main{
+      min-width:0;
+      flex:1;
+    }
+
+    .status-main small{
+      display:block;
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .price{
+      font-size:40px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.04em;
+      margin-bottom:10px;
+      word-break:break-all;
+    }
+
+    .change{
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .change.up{color:var(--green)}
+    .change.down{color:var(--red)}
+
+    .chips{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      align-items:flex-end;
+      min-width:124px;
+    }
+
+    .chip{
+      padding:16px 18px;
+      min-width:100%;
+      text-align:center;
+      border-radius:22px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+      font-weight:900;
+      font-size:17px;
+      line-height:1;
+      color:#70a5ff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .chip.risk{color:#6be09d}
+
+    .metric-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .metric-card{
+      background:rgba(255,255,255,.025);
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:22px;
+      min-height:110px;
+      padding:16px 14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.01);
+    }
+
+    .metric-label{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .metric-value{
+      font-size:22px;
+      line-height:1.15;
+      font-weight:900;
+      word-break:break-word;
+    }
+
+    .metric-value.green{color:var(--green)}
+    .metric-value.red{color:var(--red)}
+    .metric-value.blue{color:#70a5ff}
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding:0 0 6px;
+      margin-bottom:14px;
+      scrollbar-width:none;
+    }
+
+    .tabs::-webkit-scrollbar{display:none}
+
+    .tab{
+      border:none;
+      padding:14px 18px;
+      min-width:max-content;
+      border-radius:18px;
+      background:#0f2138;
+      color:#c6d4ea;
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .tab.active{
+      background:#173559;
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .page{
+      display:none;
+      margin-bottom:16px;
+    }
+
+    .page.active{
+      display:block;
+    }
+
+    .card{
+      background:linear-gradient(180deg,#0f223c,#0d2038);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:18px 16px;
+      box-shadow:var(--shadow);
+      margin-bottom:16px;
+    }
+
+    .section-title{
+      margin:0 0 14px;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+
+    .mini-pills{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding-bottom:4px;
+      margin-bottom:12px;
+      scrollbar-width:none;
+    }
+
+    .mini-pills::-webkit-scrollbar{display:none}
+
+    .mini-pill{
+      border:none;
+      background:#162843;
+      color:var(--text);
+      border-radius:16px;
+      padding:10px 14px;
+      font-weight:800;
+      min-width:max-content;
+      cursor:pointer;
+    }
+
+    .mini-pill.active{background:#203e66}
+
+    .chart-box,
+    .heat-box,
+    .liq-box,
+    .macro-box,
+    .alerts-box,
+    .spot-box,
+    .futures-box{
+      background:linear-gradient(180deg,#0b1727,#091320);
+      border:1px dashed rgba(255,255,255,.1);
+      border-radius:24px;
+      min-height:260px;
+      padding:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      color:var(--muted);
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .chart-box{
+      min-height:420px;
+      flex-direction:column;
+      align-items:stretch;
+      justify-content:flex-start;
+      padding:14px;
+      gap:12px;
+    }
+
+    .chart-top{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      scrollbar-width:none;
+      padding-bottom:4px;
+    }
+
+    .chart-top::-webkit-scrollbar{display:none}
+
+    .chart-stage{
+      flex:1;
+      min-height:300px;
+      border-radius:18px;
+      background:#07111c;
+      border:1px solid rgba(255,255,255,.05);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#7f97ba;
+      font-weight:800;
+      font-size:17px;
+      padding:18px;
+    }
+
+    .rsi-box{
+      min-height:110px;
+      border-radius:18px;
+      background:#0b1727;
+      border:1px solid rgba(255,255,255,.05);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#7f97ba;
+      font-size:17px;
+      font-weight:800;
+      padding:14px;
+    }
+
+    .two-col{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+    }
+
+    .heat-title{
+      margin:0 0 10px;
+      font-size:18px;
+      font-weight:900;
+    }
+
+    .heat-box{
+      min-height:260px;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:calc(12px + var(--safe-bottom));
+      width:min(100% - 28px, 430px);
+      padding:12px;
+      background:rgba(8,22,38,.92);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:28px;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      z-index:50;
+      box-shadow:0 18px 40px rgba(0,0,0,.3);
+    }
+
+    .nav-btn{
+      border:none;
+      border-radius:22px;
+      min-height:82px;
+      background:#0f2138;
+      color:#aabbd6;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.04);
+    }
+
+    .nav-btn.active{
+      background:#173559;
+      color:#fff;
+    }
+
+    .nav-emoji{
+      font-size:23px;
+      line-height:1;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    @media (max-width:430px){
+      .price{font-size:34px}
+      .change{font-size:18px}
+      .chips{
+        min-width:114px;
+        gap:12px;
+      }
+      .chip{
+        padding:14px 14px;
+        font-size:15px;
+      }
+      .metric-grid{
+        gap:10px;
+      }
+      .metric-card{
+        min-height:96px;
+        padding:14px 12px;
+      }
+      .metric-value{
+        font-size:18px;
+      }
+      .chart-box{
+        min-height:390px;
+      }
+      .heat-box,
+      .liq-box,
+      .macro-box,
+      .alerts-box,
+      .spot-box,
+      .futures-box{
+        min-height:220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <strong>BTC PRO PANEL</strong>
+        <span id="versionLabel">xd3-s2.0</span>
+      </div>
+      <button class="gear-btn" id="settingsBtn" type="button">⚙️</button>
+    </header>
+
+    <section class="asset-row" id="assetRow">
+      <button class="pill active" data-asset="BTC" type="button">BTC</button>
+      <button class="pill" data-asset="ETH" type="button">ETH</button>
+      <button class="pill" data-asset="SOL" type="button">SOL</button>
+      <button class="pill" data-asset="BNB" type="button">BNB</button>
+      <button class="pill" data-asset="XRP" type="button">XRP</button>
+      <button class="pill" data-asset="TOTAL" type="button">TOTAL</button>
+      <button class="pill" data-asset="TOTAL2" type="button">TOTAL2</button>
+      <button class="pill" data-asset="HAC" type="button">HAC</button>
+      <button class="pill" data-asset="HACD" type="button">HACD</button>
+    </section>
+
+    <section class="tf-row" id="tfRow">
+      <button class="pill" data-tf="30s" type="button">30s</button>
+      <button class="pill active" data-tf="1m" type="button">1m</button>
+      <button class="pill" data-tf="3m" type="button">3m</button>
+      <button class="pill" data-tf="5m" type="button">5m</button>
+      <button class="pill" data-tf="15m" type="button">15m</button>
+      <button class="pill" data-tf="30m" type="button">30m</button>
+      <button class="pill" data-tf="1H" type="button">1H</button>
+      <button class="pill" data-tf="2H" type="button">2H</button>
+      <button class="pill" data-tf="4H" type="button">4H</button>
+      <button class="pill" data-tf="1D" type="button">1D</button>
+      <button class="pill" data-tf="1W" type="button">1W</button>
+      <button class="pill" data-tf="2W" type="button">2W</button>
+      <button class="pill" data-tf="3W" type="button">3W</button>
+      <button class="pill" data-tf="1M" type="button">1M</button>
+      <button class="pill" data-tf="2M" type="button">2M</button>
+      <button class="pill" data-tf="3M" type="button">3M</button>
+    </section>
+
+    <section class="status-card" id="overviewHero">
+      <div class="status-head">
+        <div class="status-main">
+          <small id="heroLabel">BTC Canlı Fiyat</small>
+          <div class="price" id="heroPrice">$68,108.16</div>
+          <div class="change up" id="heroChange">0.15%</div>
+        </div>
+        <div class="chips">
+          <div class="chip" id="trendChip">Trend: Neutral</div>
+          <div class="chip risk" id="riskChip">Risk: Low</div>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">SPOT</div><div class="metric-value" id="mSpot">$68,108.16</div></div>
+        <div class="metric-card"><div class="metric-label">FUTURES</div><div class="metric-value" id="mFutures">$68,074.21</div></div>
+        <div class="metric-card"><div class="metric-label">BASIS</div><div class="metric-value" id="mBasis">-33.95</div></div>
+        <div class="metric-card"><div class="metric-label">24H</div><div class="metric-value green" id="m24h">0.15%</div></div>
+
+        <div class="metric-card"><div class="metric-label">FUNDING</div><div class="metric-value" id="mFunding">0.0032%</div></div>
+        <div class="metric-card"><div class="metric-label">OI</div><div class="metric-value" id="mOi">89.69K</div></div>
+        <div class="metric-card"><div class="metric-label">L/S</div><div class="metric-value" id="mLs">50.6/49.4</div></div>
+        <div class="metric-card"><div class="metric-label">F&amp;G</div><div class="metric-value" id="mFg">8</div></div>
+
+        <div class="metric-card"><div class="metric-label">DOM</div><div class="metric-value" id="mDom">56.11%</div></div>
+        <div class="metric-card"><div class="metric-label">MOMENTUM</div><div class="metric-value" id="mMomentum">Weak</div></div>
+        <div class="metric-card"><div class="metric-label">SQUEEZE</div><div class="metric-value" id="mSqueeze">Low</div></div>
+        <div class="metric-card"><div class="metric-label">WS</div><div class="metric-value green" id="mWs">Live</div></div>
+      </div>
+    </section>
+
+    <nav class="tabs" id="mainTabs">
+      <button class="tab active" data-page="overview" type="button">Overview</button>
+      <button class="tab" data-page="chart" type="button">Chart</button>
+      <button class="tab" data-page="spot" type="button">Spot</button>
+      <button class="tab" data-page="futures" type="button">Futures</button>
+      <button class="tab" data-page="liquidity" type="button">Liquidity</button>
+      <button class="tab" data-page="alerts" type="button">Alerts</button>
+      <button class="tab" data-page="macro" type="button">Macro</button>
+    </nav>
+
+    <main>
+      <section class="page active" id="page-overview">
+        <div class="card">
+          <h2 class="section-title">Market State</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-label">ASSET</div><div class="metric-value blue" id="ovAsset">BTC</div></div>
+            <div class="metric-card"><div class="metric-label">TIMEFRAME</div><div class="metric-value blue" id="ovTf">1m</div></div>
+            <div class="metric-card"><div class="metric-label">MODE</div><div class="metric-value">Scalp</div></div>
+            <div class="metric-card"><div class="metric-label">SIGNAL</div><div class="metric-value green" id="ovSignal">Neutral</div></div>
+
+            <div class="metric-card"><div class="metric-label">TREND</div><div class="metric-value blue" id="ovTrend">Neutral</div></div>
+            <div class="metric-card"><div class="metric-label">RISK</div><div class="metric-value green" id="ovRisk">Low</div></div>
+            <div class="metric-card"><div class="metric-label">BIAS</div><div class="metric-value" id="ovBias">Balanced</div></div>
+            <div class="metric-card"><div class="metric-label">VOLATILITY</div><div class="metric-value" id="ovVol">Normal</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Quick Notes</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-label">ON-CHAIN</div><div class="metric-value">Ready</div></div>
+            <div class="metric-card"><div class="metric-label">LIQUIDITY</div><div class="metric-value">Ready</div></div>
+            <div class="metric-card"><div class="metric-label">FUTURES</div><div class="metric-value">Ready</div></div>
+            <div class="metric-card"><div class="metric-label">ALERTS</div><div class="metric-value">Ready</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-chart">
+        <div class="card">
+          <h2 class="section-title">Chart</h2>
+
+          <div class="chart-top" id="chartTfTop">
+            <button class="mini-pill active" data-mini-tf="1m" type="button">1m</button>
+            <button class="mini-pill" data-mini-tf="5m" type="button">5m</button>
+            <button class="mini-pill" data-mini-tf="15m" type="button">15m</button>
+            <button class="mini-pill" data-mini-tf="1H" type="button">1H</button>
+            <button class="mini-pill" data-mini-tf="4H" type="button">4H</button>
+            <button class="mini-pill" data-mini-tf="1D" type="button">1D</button>
+          </div>
+
+          <div class="chart-box">
+            <div class="chart-stage" id="chartStage">
+              TradingView chart bir sonraki parçada bağlanacak.<br />
+              Şu an asset / timeframe / tab sistemi çalışıyor.
+            </div>
+            <div class="rsi-box" id="rsiStage">RSI paneli bir sonraki parçada bağlanacak.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">MA Controls</h2>
+          <div class="metric-grid">
+            <div class="metric-card"><div class="metric-label">EMA 1</div><div class="metric-value">20</div></div>
+            <div class="metric-card"><div class="metric-label">EMA 2</div><div class="metric-value">50</div></div>
+            <div class="metric-card"><div class="metric-label">EMA 3</div><div class="metric-value">111</div></div>
+            <div class="metric-card"><div class="metric-label">EMA 4</div><div class="metric-value">200</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-spot">
+        <div class="card">
+          <h2 class="section-title">Spot Orderflow</h2>
+          <div class="spot-box" id="spotBox">
+            Spot ekranı aktif. Bir sonraki parçada canlı orderflow ve spot özet bağlanacak.
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-futures">
+        <div class="card">
+          <h2 class="section-title">Futures Summary</h2>
+          <div class="futures-box" id="futuresBox">
+            Futures ekranı aktif. Funding / OI / Basis / L-S veri motoru bir sonraki parçada bağlanacak.
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-liquidity">
+        <div class="card">
+          <h2 class="section-title">Liquidity Heatmap</h2>
+          <div class="heat-box" id="liqHeatmapBox">Liquidity Heatmap aktif alan</div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">Liquidation Heatmap</h2>
+          <div class="liq-box" id="liqBox">Liquidation Heatmap aktif alan</div>
+        </div>
+      </section>
+
+      <section class="page" id="page-alerts">
+        <div class="card">
+          <h2 class="section-title">Alerts Center</h2>
+          <div class="alerts-box" id="alertsBox">
+            Alerts ekranı aktif. Bir sonraki parçada fiyat / funding / OI / trend alarm sistemi bağlanacak.
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-macro">
+        <div class="card">
+          <h2 class="section-title">Macro Dashboard</h2>
+          <div class="macro-box" id="macroBox">
+            Macro ekranı aktif. Dominance / TOTAL / TOTAL2 / macro kartları bir sonraki parçada bağlanacak.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn active" data-page="overview" type="button">
+      <span class="nav-emoji">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-page="chart" type="button">
+      <span class="nav-emoji">📈</span>
+      <span>Chart</span>
+    </button>
+    <button class="nav-btn" data-page="liquidity" type="button">
+      <span class="nav-emoji">💧</span>
+      <span>Liquidity</span>
+    </button>
+    <button class="nav-btn" data-page="alerts" type="button">
+      <span class="nav-emoji">🔔</span>
+      <span>Alerts</span>
+    </button>
+    <button class="nav-btn" data-page="macro" type="button">
+      <span class="nav-emoji">⚙️</span>
+      <span>Macro</span>
+    </button>
+  </nav>
+
+  <script>
+    const STATE = {
+      asset: "BTC",
+      timeframe: "1m",
+      page: "overview"
+    };
+
+    const DATA = {
+      BTC:{
+        price:"$68,108.16", change:"0.15%", spot:"$68,108.16", futures:"$68,074.21",
+        basis:"-33.95", h24:"0.15%", funding:"0.0032%", oi:"89.69K", ls:"50.6/49.4",
+        fg:"8", dom:"56.11%", momentum:"Weak", squeeze:"Low", ws:"Live",
+        trend:"Neutral", risk:"Low", bias:"Balanced", vol:"Normal"
+      },
+      ETH:{
+        price:"$3,642.84", change:"0.28%", spot:"$3,642.84", futures:"$3,640.12",
+        basis:"-2.72", h24:"0.28%", funding:"0.0051%", oi:"74.20K", ls:"51.1/48.9",
+        fg:"12", dom:"17.84%", momentum:"Stable", squeeze:"Low", ws:"Live",
+        trend:"Neutral", risk:"Low", bias:"Balanced", vol:"Normal"
+      },
+      SOL:{
+        price:"$178.42", change:"0.61%", spot:"$178.42", futures:"$178.11",
+        basis:"-0.31", h24:"0.61%", funding:"0.0084%", oi:"61.32K", ls:"50.8/49.2",
+        fg:"14", dom:"2.94%", momentum:"Strong", squeeze:"Medium", ws:"Live",
+        trend:"Bullish", risk:"Medium", bias:"Long", vol:"High"
+      },
+      BNB:{
+        price:"$612.17", change:"0.09%", spot:"$612.17", futures:"$611.82",
+        basis:"-0.35", h24:"0.09%", funding:"0.0027%", oi:"49.10K", ls:"50.2/49.8",
+        fg:"9", dom:"3.21%", momentum:"Neutral", squeeze:"Low", ws:"Live",
+        trend:"Neutral", risk:"Low", bias:"Balanced", vol:"Normal"
+      },
+      XRP:{
+        price:"$0.5932", change:"-0.42%", spot:"$0.5932", futures:"$0.5927",
+        basis:"-0.0005", h24:"-0.42%", funding:"0.0019%", oi:"44.02K", ls:"49.8/50.2",
+        fg:"7", dom:"1.11%", momentum:"Weak", squeeze:"Low", ws:"Live",
+        trend:"Bearish", risk:"Medium", bias:"Short", vol:"Normal"
+      },
+      TOTAL:{
+        price:"$2.48T", change:"0.23%", spot:"$2.48T", futures:"—",
+        basis:"—", h24:"0.23%", funding:"—", oi:"—", ls:"—",
+        fg:"11", dom:"—", momentum:"Stable", squeeze:"Low", ws:"Live",
+        trend:"Neutral", risk:"Low", bias:"Balanced", vol:"Normal"
+      },
+      TOTAL2:{
+        price:"$1.06T", change:"0.31%", spot:"$1.06T", futures:"—",
+        basis:"—", h24:"0.31%", funding:"—", oi:"—", ls:"—",
+        fg:"12", dom:"—", momentum:"Stable", squeeze:"Low", ws:"Live",
+        trend:"Neutral", risk:"Low", bias:"Balanced", vol:"Normal"
+      },
+      HAC:{
+        price:"$17.84", change:"1.12%", spot:"$17.84", futures:"$17.79",
+        basis:"-0.05", h24:"1.12%", funding:"0.012%", oi:"8.40K", ls:"52.4/47.6",
+        fg:"17", dom:"—", momentum:"Strong", squeeze:"Medium", ws:"Live",
+        trend:"Bullish", risk:"Medium", bias:"Long", vol:"High"
+      },
+      HACD:{
+        price:"$62.10", change:"0.87%", spot:"$62.10", futures:"$62.01",
+        basis:"-0.09", h24:"0.87%", funding:"0.010%", oi:"6.92K", ls:"51.7/48.3",
+        fg:"15", dom:"—", momentum:"Strong", squeeze:"Medium", ws:"Live",
+        trend:"Bullish", risk:"Medium", bias:"Long", vol:"High"
+      }
+    };
+
+    const assetButtons = [...document.querySelectorAll("#assetRow .pill")];
+    const tfButtons = [...document.querySelectorAll("#tfRow .pill")];
+    const tabButtons = [...document.querySelectorAll("#mainTabs .tab")];
+    const pages = [...document.querySelectorAll(".page")];
+    const navButtons = [...document.querySelectorAll("#bottomNav .nav-btn")];
+    const chartMiniButtons = [...document.querySelectorAll("#chartTfTop .mini-pill")];
+
+    const refs = {
+      heroLabel: document.getElementById("heroLabel"),
+      heroPrice: document.getElementById("heroPrice"),
+      heroChange: document.getElementById("heroChange"),
+      trendChip: document.getElementById("trendChip"),
+      riskChip: document.getElementById("riskChip"),
+
+      mSpot: document.getElementById("mSpot"),
+      mFutures: document.getElementById("mFutures"),
+      mBasis: document.getElementById("mBasis"),
+      m24h: document.getElementById("m24h"),
+      mFunding: document.getElementById("mFunding"),
+      mOi: document.getElementById("mOi"),
+      mLs: document.getElementById("mLs"),
+      mFg: document.getElementById("mFg"),
+      mDom: document.getElementById("mDom"),
+      mMomentum: document.getElementById("mMomentum"),
+      mSqueeze: document.getElementById("mSqueeze"),
+      mWs: document.getElementById("mWs"),
+
+      ovAsset: document.getElementById("ovAsset"),
+      ovTf: document.getElementById("ovTf"),
+      ovSignal: document.getElementById("ovSignal"),
+      ovTrend: document.getElementById("ovTrend"),
+      ovRisk: document.getElementById("ovRisk"),
+      ovBias: document.getElementById("ovBias"),
+      ovVol: document.getElementById("ovVol"),
+
+      chartStage: document.getElementById("chartStage"),
+      rsiStage: document.getElementById("rsiStage"),
+      spotBox: document.getElementById("spotBox"),
+      futuresBox: document.getElementById("futuresBox"),
+      liqHeatmapBox: document.getElementById("liqHeatmapBox"),
+      liqBox: document.getElementById("liqBox"),
+      alertsBox: document.getElementById("alertsBox"),
+      macroBox: document.getElementById("macroBox")
+    };
+
+    function setActive(list, matcher){
+      list.forEach(btn => {
+        btn.classList.toggle("active", matcher(btn));
+      });
+    }
+
+    function openPage(pageName){
+      STATE.page = pageName;
+
+      setActive(tabButtons, btn => btn.dataset.page === pageName);
+      setActive(navButtons, btn => btn.dataset.page === pageName);
+
+      pages.forEach(page => {
+        page.classList.toggle("active", page.id === `page-${pageName}`);
+      });
+
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function renderAsset(){
+      const d = DATA[STATE.asset];
+
+      refs.heroLabel.textContent = `${STATE.asset} Canlı Fiyat`;
+      refs.heroPrice.textContent = d.price;
+      refs.heroChange.textContent = d.change;
+      refs.heroChange.className = `change ${String(d.change).trim().startsWith("-") ? "down" : "up"}`;
+
+      refs.trendChip.textContent = `Trend: ${d.trend}`;
+      refs.riskChip.textContent = `Risk: ${d.risk}`;
+
+      refs.mSpot.textContent = d.spot;
+      refs.mFutures.textContent = d.futures;
+      refs.mBasis.textContent = d.basis;
+      refs.m24h.textContent = d.h24;
+      refs.m24h.className = `metric-value ${String(d.h24).trim().startsWith("-") ? "red" : "green"}`;
+      refs.mFunding.textContent = d.funding;
+      refs.mOi.textContent = d.oi;
+      refs.mLs.textContent = d.ls;
+      refs.mFg.textContent = d.fg;
+      refs.mDom.textContent = d.dom;
+      refs.mMomentum.textContent = d.momentum;
+      refs.mSqueeze.textContent = d.squeeze;
+      refs.mWs.textContent = d.ws;
+
+      refs.ovAsset.textContent = STATE.asset;
+      refs.ovTf.textContent = STATE.timeframe;
+      refs.ovSignal.textContent = d.trend;
+      refs.ovTrend.textContent = d.trend;
+      refs.ovRisk.textContent = d.risk;
+      refs.ovBias.textContent = d.bias;
+      refs.ovVol.textContent = d.vol;
+
+      refs.chartStage.innerHTML = `
+        <div>
+          <div style="font-size:22px;font-weight:900;margin-bottom:10px;">${STATE.asset} • ${STATE.timeframe}</div>
+          <div style="font-size:16px;line-height:1.5;color:#8ea6c6;">
+            TradingView chart bir sonraki parçada bağlanacak.<br>
+            Seçili sembol: <strong style="color:#fff">${STATE.asset}</strong><br>
+            Seçili zaman: <strong style="color:#fff">${STATE.timeframe}</strong>
+          </div>
+        </div>
+      `;
+
+      refs.rsiStage.textContent = `${STATE.asset} RSI paneli bir sonraki parçada bağlanacak.`;
+      refs.spotBox.textContent = `${STATE.asset} spot görünümü aktif.`;
+      refs.futuresBox.textContent = `${STATE.asset} futures görünümü aktif.`;
+      refs.liqHeatmapBox.textContent = `${STATE.asset} Liquidity Heatmap aktif alan`;
+      refs.liqBox.textContent = `${STATE.asset} Liquidation Heatmap aktif alan`;
+      refs.alertsBox.textContent = `${STATE.asset} Alerts merkezi aktif.`;
+      refs.macroBox.textContent = `${STATE.asset} Macro görünümü aktif.`;
+    }
+
+    assetButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        STATE.asset = btn.dataset.asset;
+        setActive(assetButtons, x => x.dataset.asset === STATE.asset);
+        renderAsset();
+      });
+    });
+
+    tfButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        STATE.timeframe = btn.dataset.tf;
+        setActive(tfButtons, x => x.dataset.tf === STATE.timeframe);
+        renderAsset();
+      });
+    });
+
+    chartMiniButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tf = btn.dataset.miniTf;
+        STATE.timeframe = tf;
+        setActive(chartMiniButtons, x => x.dataset.miniTf === tf);
+        setActive(tfButtons, x => x.dataset.tf === tf);
+        renderAsset();
+      });
+    });
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        openPage(btn.dataset.page);
+      });
+    });
+
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        openPage(btn.dataset.page);
+      });
+    });
+
+    document.getElementById("settingsBtn").addEventListener("click", () => {
+      alert("Settings paneli bir sonraki parçada bağlanacak.");
+    });
+
+    renderAsset();
+    openPage("overview");
+  </script>
+</body>
+</html>
